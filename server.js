@@ -3,16 +3,17 @@ const mongoose = require('mongoose');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const path = require('path');
 const marked = require('marked');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
-
-
+app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Configuration
 const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://sanidhyakiit:w003TDgfj2mG96He@cluster0.yfsrp.mongodb.net/Elearning';
@@ -80,9 +81,19 @@ app.get('/api/courses/:id', async (req, res) => {
     }
 });
 
-
-
-
+// Add new course
+app.post('/api/courses', async (req, res) => {
+    try {
+        console.log('Received course data:', req.body);
+        const newCourse = new Course(req.body);
+        const savedCourse = await newCourse.save();
+        console.log('Saved course:', savedCourse);
+        res.status(201).json(savedCourse);
+    } catch (error) {
+        console.error('Error adding course:', error);
+        res.status(500).json({ error: 'Failed to add course', details: error.message });
+    }
+});
 
 // Generate AI-powered content
 app.post('/api/generate-content', async (req, res) => {
