@@ -14,7 +14,7 @@ let updateModuleCount = 0;
 // Load courses from the server
 async function loadCourses() {
     try {
-        const response = await fetch('http://localhost:5500/api/courses');
+        const response = await fetch('http://localhost:3000/api/courses');  // Ensure correct backend URL
         const courses = await response.json();
         coursesList.innerHTML = ''; // Clear the current list
 
@@ -46,7 +46,7 @@ async function loadCourses() {
                 const courseCode = e.target.getAttribute('data-code');
                 const confirmed = confirm('Are you sure you want to delete this course?');
                 if (confirmed) {
-                    await fetch(`http://localhost:5500/api/courses/${courseCode}`, { method: 'DELETE' });
+                    await fetch(`http://localhost:3000/api/courses/${courseCode}`, { method: 'DELETE' });
                     loadCourses(); // Reload after deletion
                 }
             });
@@ -106,7 +106,7 @@ form.addEventListener('submit', async (e) => {
     });
 
     try {
-        const response = await fetch('http://localhost:5500/api/courses', {
+        const response = await fetch('http://localhost:3000/api/courses', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(courseData),
@@ -130,7 +130,7 @@ form.addEventListener('submit', async (e) => {
 // Open the update modal
 async function openUpdateModal(courseCode) {
     try {
-        const response = await fetch(`http://localhost:5500/api/courses/${courseCode}`);
+        const response = await fetch(`http://localhost:3000/api/courses/${courseCode}`); // Use correct backend URL
         if (!response.ok) throw new Error('Failed to fetch course details');
         const course = await response.json();
 
@@ -225,7 +225,7 @@ updateForm.addEventListener('submit', async (e) => {
     });
 
     try {
-        const response = await fetch(`http://localhost:5500/api/courses/${courseCode}`, {
+        const response = await fetch(`http://localhost:3000/api/courses/${courseCode}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedCourse),
@@ -244,5 +244,5 @@ updateForm.addEventListener('submit', async (e) => {
     }
 });
 
-// Initial load
+// Initial load of courses
 loadCourses();

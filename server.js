@@ -7,7 +7,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5500;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -64,10 +64,10 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Routes
 
-// Fetch course details by course_code
-app.get('/api/courses/:id', async (req, res) => {
+// Fetch course details by MongoDB _id
+app.get('/api/courses/by-id/:id', async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id); // Ensure `id` matches MongoDB's `_id`
+        const course = await Course.findById(req.params.id); // Match MongoDB's _id
         if (!course) {
             return res.status(404).json({ error: 'Course not found' });
         }
@@ -77,6 +77,7 @@ app.get('/api/courses/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch course' });
     }
 });
+
 
 
 // Fetch all courses
@@ -204,6 +205,18 @@ app.post('/api/generate-content', async (req, res) => {
     }
 });
 
+
+// Serve the addcourse.html file
+app.get('/addcourse', (req, res) => {
+    console.log("Request for addcourse.html received.");
+    res.sendFile(path.join(__dirname,'public', 'addcourse.html'), (err) => {
+        if (err) {
+            console.error("Error serving file:", err);
+            res.status(500).send('Something went wrong!');
+        }
+    });
+});
+
 // Add this route before the catch-all route
 app.get('/course/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'course_page.html'));
@@ -215,6 +228,8 @@ app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'home.html'));
     }
 });
+
+
 
 
 

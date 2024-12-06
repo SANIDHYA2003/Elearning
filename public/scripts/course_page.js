@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchCourseDetails() {
         try {
-            const response = await fetch(`/api/courses/${courseId}`);
+            const response = await fetch(`/api/courses/by-id/${courseId}`); // Updated route
             if (!response.ok) {
                 throw new Error('Failed to fetch course details');
             }
