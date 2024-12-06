@@ -14,6 +14,10 @@
         <h1>Add New Course</h1>
         <form id="addCourseForm">
             <div class="form-group">
+                <label for="course_code">Course Code:</label>
+                <input type="text" id="course_code" name="course_code" required>
+            </div>
+            <div class="form-group">
                 <label for="title">Course Title:</label>
                 <input type="text" id="title" name="title" required>
             </div>
@@ -27,7 +31,68 @@
             <button type="button" id="addModule">Add Module</button>
             <button type="submit">Add Course</button>
         </form>
+
+        <h2>Existing Courses</h2>
+        <table id="coursesTable">
+            <thead>
+                <tr>
+                    <th>Course Code</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Modules</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="coursesList"></tbody>
+        </table>
     </div>
+
+    <!-- Update Course Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <h2>Update Course</h2>
+            <form id="updateCourseForm">
+                <div class="form-group">
+                    <label for="update_course_code">Course Code:</label>
+                    <input type="text" id="update_course_code" name="course_code" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="update_title">Course Title:</label>
+                    <input type="text" id="update_title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="update_category">Category:</label>
+                    <input type="text" id="update_category" name="category" required>
+                </div>
+                <div id="update_modules">
+                    <h2>Modules</h2>
+                </div>
+                <button type="button" id="addUpdateModule">Add Module</button>
+                <button type="submit">Update Course</button>
+                <button type="button" id="closeModal">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Module Modal -->
+    <div id="addModuleModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Module</h2>
+            <form id="addModuleForm">
+                <div class="form-group">
+                    <label for="module_title">Module Title:</label>
+                    <input type="text" id="module_title" name="module_title" required>
+                </div>
+                <div class="form-group">
+                    <label for="module_topics">Topics (comma-separated):</label>
+                    <input type="text" id="module_topics" name="module_topics" required>
+                </div>
+                <button type="submit">Add Module</button>
+                <button type="button" id="closeAddModuleModal">Close</button>
+            </form>
+        </div>
+    </div>
+
     <script src="scripts/addcourse.js"></script>
 </body>
 

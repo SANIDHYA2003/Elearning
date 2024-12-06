@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const courseId = new URLSearchParams(window.location.search).get('id');
+    const courseId = window.location.pathname.split('/').pop(); // Extract course ID from URL
     const courseTitle = document.getElementById('courseTitle');
     const courseStructure = document.getElementById('courseStructure');
     const topicTitle = document.getElementById('topicTitle');
@@ -27,9 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/api/generate-content', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ topic }),
             });
             if (!response.ok) {
@@ -58,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        // Add click event listeners to topics
         document.querySelectorAll('.topic').forEach((topicElement, index) => {
             topicElement.addEventListener('click', () => {
                 currentTopicIndex = index;
@@ -66,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Load the first topic
         if (topics.length > 0) {
             loadTopic(topics[0].title);
         }
@@ -77,13 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector(`.topic[data-topic="${topic}"]`).classList.add('active-topic');
         topicTitle.textContent = topic;
 
-        // Fade-out effect
         topicContent.classList.add('loading');
         topicContent.innerHTML = '<p>Loading content...</p>';
 
         const content = await generateContent(topic);
 
-        // Fade-in effect
         topicContent.innerHTML = content;
         topicContent.classList.remove('loading');
         updateNavigationButtons();
@@ -119,3 +113,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializePage();
 });
+

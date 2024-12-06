@@ -1,23 +1,26 @@
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
 }
 
 .container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
+    max-width: 800px;
+    margin: 50px auto;
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
+h1, h2, h3 {
+    margin: 10px 0;
     color: #333;
+}
+
+form {
+    margin-bottom: 20px;
 }
 
 .form-group {
@@ -26,48 +29,82 @@ h1, h2 {
 
 label {
     display: block;
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
-input[type="text"] {
+input {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
 button {
-    display: inline-block;
-    background: #333;
+    background-color: #007BFF;
     color: #fff;
-    padding: 10px 20px;
+    padding: 10px 15px;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-right: 5px;
 }
 
 button:hover {
-    background: #555;
+    background-color: #0056b3;
 }
 
-.module, .topic {
-    background-color: #f9f9f9;
-    padding: 10px;
-    margin-bottom: 10px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
     border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px;
+    text-align: left;
 }
 
-.remove-btn {
-    background: #ff4136;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    float: right;
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
 }
 
-.remove-btn:hover {
-    background: #ff7066;
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 100%;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+button {
+    margin: 5px;
+}

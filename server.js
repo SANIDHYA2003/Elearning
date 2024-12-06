@@ -7,7 +7,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5500;
 
 // Middleware
 app.use(cors());
@@ -29,9 +29,16 @@ mongoose.connect(MONGO_URI, {
     });
 
 // Course Schema
+
+// Course Schema with course_code
 const CourseSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
+    course_code: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
     modules: [
         {
             title: { type: String, required: true },
@@ -46,6 +53,7 @@ const CourseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', CourseSchema);
 
+
 // AI Configuration
 const API_KEY = process.env.GEMINI_API_KEY;
 if (!API_KEY) {
@@ -55,6 +63,21 @@ if (!API_KEY) {
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Routes
+
+// Fetch course details by course_code
+app.get('/api/courses/:id', async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id); // Ensure `id` matches MongoDB's `_id`
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.json(course);
+    } catch (error) {
+        console.error('Error fetching course:', error.message);
+        res.status(500).json({ error: 'Failed to fetch course' });
+    }
+});
+
 
 // Fetch all courses
 app.get('/api/courses', async (req, res) => {
@@ -67,10 +90,10 @@ app.get('/api/courses', async (req, res) => {
     }
 });
 
-// Fetch course details by ID
-app.get('/api/courses/:id', async (req, res) => {
+// Fetch course details by course_code
+app.get('/api/courses/:course_code', async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id);
+        const course = await Course.findOne({ course_code: req.params.course_code });
         if (!course) {
             return res.status(404).json({ error: 'Course not found' });
         }
@@ -81,19 +104,66 @@ app.get('/api/courses/:id', async (req, res) => {
     }
 });
 
+
+// Add new course
 // Add new course
 app.post('/api/courses', async (req, res) => {
     try {
-        console.log('Received course data:', req.body);
+        // Ensure that the course_code is unique
+        const { course_code } = req.body;
+        const existingCourse = await Course.findOne({ course_code });
+        if (existingCourse) {
+            return res.status(400).json({ error: 'Course code must be unique' });
+        }
+
         const newCourse = new Course(req.body);
         const savedCourse = await newCourse.save();
-        console.log('Saved course:', savedCourse);
         res.status(201).json(savedCourse);
     } catch (error) {
         console.error('Error adding course:', error);
         res.status(500).json({ error: 'Failed to add course', details: error.message });
     }
 });
+
+// Delete course by ID
+// Delete course by course_code
+app.delete('/api/courses/:course_code', async (req, res) => {
+    try {
+        const course = await Course.findOneAndDelete({ course_code: req.params.course_code });
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.json({ message: 'Course deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting course:', error.message);
+        res.status(500).json({ error: 'Failed to delete course' });
+    }
+});
+
+
+// Update course
+// Update course by course_code
+app.put('/api/courses/:course_code', async (req, res) => {
+    try {
+        const updatedCourse = await Course.findOneAndUpdate(
+            { course_code: req.params.course_code }, // Find by course_code
+            req.body,
+            { new: true } // Return the updated course
+        );
+
+        if (!updatedCourse) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.json(updatedCourse);
+    } catch (error) {
+        console.error('Error updating course:', error);
+        res.status(500).json({ error: 'Failed to update course' });
+    }
+});
+
+
+
+
 
 // Generate AI-powered content
 app.post('/api/generate-content', async (req, res) => {
@@ -145,6 +215,8 @@ app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'home.html'));
     }
 });
+
+
 
 // Start the server
 app.listen(port, () => {
