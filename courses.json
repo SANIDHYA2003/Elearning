@@ -1,0 +1,90 @@
+[
+  {
+    "title": "Introduction to Web Development",
+    "category": "Programming",
+    "modules": [
+      {
+        "title": "HTML Basics",
+        "topics": [
+          { "title": "Introduction to HTML" },
+          { "title": "HTML Structure" },
+          { "title": "HTML Forms and Inputs" }
+        ]
+      },
+      {
+        "title": "CSS Fundamentals",
+        "topics": [
+          { "title": "Introduction to CSS" },
+          { "title": "CSS Selectors" },
+          { "title": "CSS Layouts" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Introduction to Data Science",
+    "category": "Data Science",
+    "modules": [
+      {
+        "title": "Data Analysis Basics",
+        "topics": [
+          { "title": "What is Data Science?" },
+          { "title": "Data Wrangling" },
+          { "title": "Exploratory Data Analysis" }
+        ]
+      },
+      {
+        "title": "Machine Learning Basics",
+        "topics": [
+          { "title": "Supervised Learning" },
+          { "title": "Unsupervised Learning" },
+          { "title": "Model Evaluation Techniques" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Introduction to Cloud Computing",
+    "category": "Cloud Computing",
+    "modules": [
+      {
+        "title": "Cloud Computing Basics",
+        "topics": [
+          { "title": "What is Cloud Computing?" },
+          { "title": "Cloud Service Models (IaaS, PaaS, SaaS)" },
+          { "title": "Cloud Deployment Models" }
+        ]
+      },
+      {
+        "title": "AWS Essentials",
+        "topics": [
+          { "title": "AWS EC2 and S3" },
+          { "title": "AWS Lambda" },
+          { "title": "AWS RDS" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Introduction to Cybersecurity",
+    "category": "Cybersecurity",
+    "modules": [
+      {
+        "title": "Basics of Cybersecurity",
+        "topics": [
+          { "title": "Understanding Cyber Threats" },
+          { "title": "Introduction to Encryption" },
+          { "title": "Cybersecurity Best Practices" }
+        ]
+      },
+      {
+        "title": "Network Security",
+        "topics": [
+          { "title": "Firewall Basics" },
+          { "title": "VPNs and Secure Connections" },
+          { "title": "Intrusion Detection Systems" }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Platform</title>
+    <link rel="stylesheet" href="style/home.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#courses">Courses</a></li>
+                <li><a href="#profile">Profile</a></li>
+                <li><a href="#chat">AI Chat</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>Welcome to Our E-Learning Platform</h1>
+            <p>Explore our courses and start learning today!</p>
+            <button id="exploreBtn">Explore Courses</button>
+        </section>
+
+        <section id="courses">
+            <h2>Available Courses</h2>
+            <div id="courseList"></div>
+        </section>
+
+        <section id="profile" class="hidden">
+            <h2>User Profile</h2>
+            <div id="userInfo"></div>
+        </section>
+
+        <section id="chat" class="hidden">
+            <h2>AI Chat</h2>
+            <div id="chatArea"></div>
+            <input type="text" id="userInput" placeholder="Ask a question...">
+            <button id="sendBtn">Send</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 E-Learning Platform. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/home.js"></script>
+</body>
+
+</html>
