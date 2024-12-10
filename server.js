@@ -5,6 +5,8 @@ const path = require('path');
 const marked = require('marked');
 const cors = require('cors');
 require('dotenv').config();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,10 +36,10 @@ mongoose.connect(MONGO_URI, {
 const CourseSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
-    course_code: { 
-        type: String, 
-        required: true, 
-        unique: true 
+    course_code: {
+        type: String,
+        required: true,
+        unique: true
     },
     modules: [
         {
@@ -52,6 +54,26 @@ const CourseSchema = new mongoose.Schema({
 });
 
 const Course = mongoose.model('Course', CourseSchema);
+
+// User Schema
+const UserSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    phone: { type: String },
+    organization: { type: String },
+    password: { type: String, required: true },
+    photo: { type: String, default: null }, // URL or base64 encoded string for photo DP
+    enrolledCourses: [
+        {
+            courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+            progress: { type: Number, default: 0 }, // Progress in percentage
+        }
+    ],
+    rewardCoins: { type: Number, default: 0 }, // Coins earned
+}, { timestamps: true });
+
+const User = mongoose.model('User', UserSchema);
+
 
 
 // AI Configuration
@@ -162,6 +184,45 @@ app.put('/api/courses/:course_code', async (req, res) => {
     }
 });
 
+// User Signup
+app.post('/api/signup', async (req, res) => {
+    const { name, email, organization, phone, password } = req.body;
+
+    try {
+       
+        const newUser = new User({ name, email, organization, phone, password });
+        await newUser.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        console.error('Error during signup:', error.message);
+        res.status(500).json({ error: 'Failed to register user' });
+    }
+});
+
+// User Login
+// User Login (Plain Text Passwords)
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Compare passwords directly
+        if (user.password !== password) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        res.status(200).json({ message: 'Login successful', user });
+    } catch (error) {
+        console.error('Error during login:', error.message);
+        res.status(500).json({ error: 'Failed to login user' });
+    }
+});
+
+
 
 
 
@@ -209,7 +270,7 @@ app.post('/api/generate-content', async (req, res) => {
 // Serve the addcourse.html file
 app.get('/addcourse', (req, res) => {
     console.log("Request for addcourse.html received.");
-    res.sendFile(path.join(__dirname,'public', 'addcourse.html'), (err) => {
+    res.sendFile(path.join(__dirname, 'public', 'addcourse.html'), (err) => {
         if (err) {
             console.error("Error serving file:", err);
             res.status(500).send('Something went wrong!');

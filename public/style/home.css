@@ -1,74 +1,542 @@
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem;
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea, #4dd0e1);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
 }
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+    background-size: 60px 60px;
+    animation: moveBackground 10s linear infinite;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 1rem;
+@keyframes moveBackground {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 60px 60px;
+    }
 }
 
-nav ul li a {
-    color: #fff;
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(0, 96, 100, 0.8); /* Slightly transparent background */
+    backdrop-filter: blur(10px); /* Blur effect for a modern look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky; /* Fix to the top */
+    top: 0;
+    z-index: 100;
+    animation: slideDown 0.5s ease-out; /* Smooth appearance animation */
+}
+
+header nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem; /* Space between nav items */
+}
+
+header nav ul li {
+    font-size: 1.2rem; /* Make text slightly larger */
+    font-weight: bold;
+    text-transform: uppercase; /* Convert to uppercase for emphasis */
+    animation: fadeIn 1s ease; /* Subtle fade-in effect */
+}
+
+header nav ul li a {
+    color: white;
     text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth color and movement transition */
+}
+
+header nav ul li a:hover {
+    color: #80deea; /* Highlight color on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+header nav .logo {
+    font-size: 1.8rem; /* Make the logo larger */
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    animation: fadeInLeft 1s ease; /* Smooth slide-in effect */
+}
+
+/* Animations */
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.auth-btn {
+    background-color: #006064;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.auth-btn:hover {
+    background-color: #00838f;
+    transform: scale(1.05);
 }
 
 main {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 2rem;
+}
+
+#home {
+    text-align: center;
+    margin-bottom: 3rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#home h1 {
+    font-size: 2.5rem;
+    color: #006064;
+    margin-bottom: 1rem;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+#home p {
+    font-size: 1.2rem;
+    color: #00838f;
+    margin-bottom: 1.5rem;
+}
+
+#home button {
+    background-color: #006064;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#home button:hover {
+    background-color: #00838f;
+    transform: scale(1.05);
+}
+
+#courses, #profile, #chat {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+}
+
+.course-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeInUp 0.5s ease-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.course-card h3 {
+    color: #006064;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.course-card:hover h3 {
+    color: #00838f;
+}
+
+.course-card p {
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.course-card .view-course-btn {
+    background-color: #006064;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    align-self: flex-start;
+    margin-top: 1rem;
+}
+
+.course-card .view-course-btn:hover {
+    background-color: #00838f;
+    transform: scale(1.05);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#courseList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulseOnLoad {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.course-card.loaded {
+    animation: pulseOnLoad 0.5s ease-out;
 }
 
 .hidden {
     display: none;
 }
 
-#courseList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.course-card {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 5px;
-}
-
-.course-card h3 {
-    margin-top: 0;
-}
-
-button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #555;
-}
-
 footer {
-    background-color: #333;
-    color: #fff;
     text-align: center;
-    padding: 1rem;
-    position: fixed;
+    padding: 1rem 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #006064;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
     bottom: 0;
     width: 100%;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#authForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+#authForm input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#authForm button {
+  
+    
+    border: none;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#authForm button:hover {
+    background-color: #00838f;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    color: #fff;
+
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+/* Custom Social Buttons Styling */
+.btn-google {
+    background-color: #db4437; /* Google's red */
+    color: white;
+    border: none;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.btn-google:hover {
+    background-color: #c23321;
+    color: white;
+}
+
+.btn-facebook {
+    background-color: #4267B2; /* Facebook blue */
+    color: white;
+    border: none;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.btn-facebook:hover {
+    background-color: #365899;
+    color: white;
+}
+
+.btn-github {
+    background-color: #333333; /* GitHub dark gray */
+    color: white;
+    border: none;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.btn-github:hover {
+    background-color: #242424;
+    color: white;
+}
+
+.btn-linkedin {
+    background-color: #0077B5; /* LinkedIn blue */
+    color: white;
+    border: none;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.btn-linkedin:hover {
+    background-color: #005983;
+    color: white;
+}
+
+/* Styling adjustments for alignment */
+.social-login {
+    margin-top: 20px;
+}
+
+.social-login p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.social-login .btn {
+    margin: 5px 0;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+
+button[type="submit"] {
+    background-color: #006064;
+    color: white; /* Text color for contrast */
+    border: none; /* Remove border */
+    padding: 0.8rem 1.5rem; /* Add padding for size */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    font-weight: bold; /* Bold text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+/* Hover Effect */
+button[type="submit"]:hover {
+    background-color: #004d40; /* Darker shade on hover */
+ 
+}
+
+/* Focus Effect */
+button[type="submit"]:focus {
+    outline: 2px solid #004d40; /* Outline for focus visibility */
+}

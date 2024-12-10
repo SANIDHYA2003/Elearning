@@ -1,88 +1,260 @@
 [
   {
-    "title": "Introduction to Web Development",
-    "category": "Programming",
+    "title": "Computer Networks",
+    "category": "Computer Science",
+    "course_code": "CSE104",
     "modules": [
       {
-        "title": "HTML Basics",
+        "title": "Introduction to Computer Networks",
         "topics": [
-          { "title": "Introduction to HTML" },
-          { "title": "HTML Structure" },
-          { "title": "HTML Forms and Inputs" }
+          { "title": "Network Types (LAN, WAN, MAN)" },
+          { "title": "OSI and TCP/IP Models" },
+          { "title": "Transmission Media" },
+          { "title": "Data Link Layer and Error Control" },
+          { "title": "Ethernet and Wireless Networks" },
+          { "title": "IP Addressing and Subnetting" },
+          { "title": "Network Protocols" },
+          { "title": "Routing and Switching" },
+          { "title": "IPv4 and IPv6" },
+          { "title": "Wireless Communication and Mobile Networks" }
         ]
       },
       {
-        "title": "CSS Fundamentals",
+        "title": "Advanced Networking Concepts",
         "topics": [
-          { "title": "Introduction to CSS" },
-          { "title": "CSS Selectors" },
-          { "title": "CSS Layouts" }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Introduction to Data Science",
-    "category": "Data Science",
-    "modules": [
-      {
-        "title": "Data Analysis Basics",
-        "topics": [
-          { "title": "What is Data Science?" },
-          { "title": "Data Wrangling" },
-          { "title": "Exploratory Data Analysis" }
-        ]
-      },
-      {
-        "title": "Machine Learning Basics",
-        "topics": [
-          { "title": "Supervised Learning" },
-          { "title": "Unsupervised Learning" },
-          { "title": "Model Evaluation Techniques" }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Introduction to Cloud Computing",
-    "category": "Cloud Computing",
-    "modules": [
-      {
-        "title": "Cloud Computing Basics",
-        "topics": [
-          { "title": "What is Cloud Computing?" },
-          { "title": "Cloud Service Models (IaaS, PaaS, SaaS)" },
-          { "title": "Cloud Deployment Models" }
-        ]
-      },
-      {
-        "title": "AWS Essentials",
-        "topics": [
-          { "title": "AWS EC2 and S3" },
-          { "title": "AWS Lambda" },
-          { "title": "AWS RDS" }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Introduction to Cybersecurity",
-    "category": "Cybersecurity",
-    "modules": [
-      {
-        "title": "Basics of Cybersecurity",
-        "topics": [
-          { "title": "Understanding Cyber Threats" },
-          { "title": "Introduction to Encryption" },
-          { "title": "Cybersecurity Best Practices" }
+          { "title": "Routing Algorithms (Distance Vector, Link State)" },
+          { "title": "Network Security (Firewalls, VPNs)" },
+          { "title": "Quality of Service (QoS)" },
+          { "title": "Network Management and Monitoring" },
+          { "title": "Software-Defined Networking (SDN)" },
+          { "title": "Network Virtualization" },
+          { "title": "Network Protocol Design" },
+          { "title": "Wireless Sensor Networks" },
+          { "title": "Mobile Ad-Hoc Networks (MANET)" },
+          { "title": "5G Networks and Beyond" }
         ]
       },
       {
         "title": "Network Security",
         "topics": [
-          { "title": "Firewall Basics" },
-          { "title": "VPNs and Secure Connections" },
-          { "title": "Intrusion Detection Systems" }
+          { "title": "Cryptography and Encryption Algorithms" },
+          { "title": "Public Key Infrastructure (PKI)" },
+          { "title": "Network Attacks and Countermeasures" },
+          { "title": "Firewalls and Intrusion Detection Systems" },
+          { "title": "Virtual Private Networks (VPN)" },
+          { "title": "Secure Socket Layer (SSL) and TLS" },
+          { "title": "Access Control and Authentication" },
+          { "title": "Security Protocols (IPSec, SSL/TLS)" },
+          { "title": "Security in Wireless Networks" },
+          { "title": "Network Forensics" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Software Engineering",
+    "category": "Computer Science",
+    "course_code": "CSE105",
+    "modules": [
+      {
+        "title": "Introduction to Software Engineering",
+        "topics": [
+          { "title": "Software Development Life Cycle (SDLC)" },
+          { "title": "Software Requirements Engineering" },
+          { "title": "System Design and Architecture" },
+          { "title": "Agile Methodologies" },
+          { "title": "Waterfall Model" },
+          { "title": "Prototyping and Iterative Models" },
+          { "title": "Software Testing Techniques" },
+          { "title": "Risk Management in Software Projects" },
+          { "title": "Quality Assurance and Metrics" },
+          { "title": "Software Configuration Management" }
+        ]
+      },
+      {
+        "title": "Advanced Software Engineering Practices",
+        "topics": [
+          { "title": "Model-Driven Development" },
+          { "title": "Component-Based Software Engineering" },
+          { "title": "Software Refactoring" },
+          { "title": "Continuous Integration and Delivery" },
+          { "title": "Test-Driven Development (TDD)" },
+          { "title": "Version Control Systems (Git, SVN)" },
+          { "title": "Software Maintenance and Evolution" },
+          { "title": "Software Documentation" },
+          { "title": "Project Management Tools" },
+          { "title": "Agile and Scrum Practices" }
+        ]
+      },
+      {
+        "title": "Software Development Tools",
+        "topics": [
+          { "title": "Integrated Development Environments (IDEs)" },
+          { "title": "Version Control with Git" },
+          { "title": "Debugging Techniques" },
+          { "title": "Unit Testing and Frameworks" },
+          { "title": "Build Automation Tools (Maven, Gradle)" },
+          { "title": "Continuous Integration Tools (Jenkins, Travis CI)" },
+          { "title": "Containerization with Docker" },
+          { "title": "Collaboration Tools (JIRA, Slack)" },
+          { "title": "CI/CD Pipeline Design" },
+          { "title": "Code Quality Tools (SonarQube)" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Artificial Intelligence",
+    "category": "Computer Science",
+    "course_code": "CSE106",
+    "modules": [
+      {
+        "title": "Introduction to Artificial Intelligence",
+        "topics": [
+          { "title": "History and Evolution of AI" },
+          { "title": "Search Algorithms (DFS, BFS)" },
+          { "title": "Heuristic Search and A* Algorithm" },
+          { "title": "Problem Solving and Knowledge Representation" },
+          { "title": "State-Space Search" },
+          { "title": "Expert Systems" },
+          { "title": "Machine Learning Basics" },
+          { "title": "Natural Language Processing" },
+          { "title": "Vision and Perception Systems" },
+          { "title": "Robotics and Motion Planning" }
+        ]
+      },
+      {
+        "title": "Machine Learning",
+        "topics": [
+          { "title": "Supervised Learning Algorithms (Linear Regression, Decision Trees)" },
+          { "title": "Unsupervised Learning (Clustering, PCA)" },
+          { "title": "Neural Networks and Deep Learning" },
+          { "title": "Reinforcement Learning" },
+          { "title": "Support Vector Machines (SVM)" },
+          { "title": "Evaluation Metrics for ML Models" },
+          { "title": "Dimensionality Reduction" },
+          { "title": "Feature Engineering" },
+          { "title": "Ensemble Methods (Random Forests, AdaBoost)" },
+          { "title": "ML Frameworks (TensorFlow, PyTorch)" }
+        ]
+      },
+      {
+        "title": "Advanced Topics in AI",
+        "topics": [
+          { "title": "Deep Reinforcement Learning" },
+          { "title": "Generative Models (GANs)" },
+          { "title": "AI in Healthcare" },
+          { "title": "AI in Autonomous Vehicles" },
+          { "title": "AI Ethics and Bias" },
+          { "title": "AI in Game Theory" },
+          { "title": "AI in Natural Language Processing" },
+          { "title": "Computer Vision with AI" },
+          { "title": "AI for Big Data" },
+          { "title": "Explainable AI" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Compiler Design",
+    "category": "Computer Science",
+    "course_code": "CSE107",
+    "modules": [
+      {
+        "title": "Introduction to Compilers",
+        "topics": [
+          { "title": "Compiler Structure and Phases" },
+          { "title": "Lexical Analysis" },
+          { "title": "Context-Free Grammar" },
+          { "title": "Syntax Analysis and Parse Trees" },
+          { "title": "Lexers and Parsers" },
+          { "title": "Top-Down and Bottom-Up Parsing" },
+          { "title": "Abstract Syntax Trees (AST)" },
+          { "title": "Symbol Tables" },
+          { "title": "Error Handling in Compilers" },
+          { "title": "Optimization Techniques" }
+        ]
+      },
+      {
+        "title": "Syntax and Semantic Analysis",
+        "topics": [
+          { "title": "Syntax-Directed Translation" },
+          { "title": "Context-Free Grammar and Parsing Techniques" },
+          { "title": "LL and LR Parsing" },
+          { "title": "Semantic Analysis and Attribute Grammars" },
+          { "title": "Type Checking and Type Systems" },
+          { "title": "Intermediate Code Generation" },
+          { "title": "Quadruples and Triples Representation" },
+          { "title": "Control Flow Graphs" },
+          { "title": "Code Optimization Techniques" },
+          { "title": "Global and Local Optimizations" }
+        ]
+      },
+      {
+        "title": "Code Generation and Optimization",
+        "topics": [
+          { "title": "Code Generation Process" },
+          { "title": "Target Code Generation" },
+          { "title": "Register Allocation" },
+          { "title": "Instruction Scheduling" },
+          { "title": "Loop Optimization" },
+          { "title": "Data Flow Analysis" },
+          { "title": "Peephole Optimization" },
+          { "title": "Linking and Loading" },
+          { "title": "Just-in-Time (JIT) Compilation" },
+          { "title": "Garbage Collection Techniques" }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Theory of Computation",
+    "category": "Computer Science",
+    "course_code": "CSE108",
+    "modules": [
+      {
+        "title": "Introduction to Automata Theory",
+        "topics": [
+          { "title": "Finite Automata (DFA, NFA)" },
+          { "title": "Regular Expressions" },
+          { "title": "Regular Languages" },
+          { "title": "Pumping Lemma for Regular Languages" },
+          { "title": "Context-Free Grammar" },
+          { "title": "Pushdown Automata" },
+          { "title": "Turing Machines" },
+          { "title": "Decidability and Undecidability" },
+          { "title": "Church-Turing Thesis" },
+          { "title": "Recursive and Recursively Enumerable Languages" }
+        ]
+      },
+      {
+        "title": "Computational Complexity",
+        "topics": [
+          { "title": "Big-O Notation and Time Complexity" },
+          { "title": "P, NP, and NP-Complete Problems" },
+          { "title": "Polynomial Time Algorithms" },
+          { "title": "Space Complexity and PSPACE" },
+          { "title": "Time Hierarchy Theorem" },
+          { "title": "Savitch’s Theorem" },
+          { "title": "Interactive Proof Systems" },
+          { "title": "Approximation Algorithms" },
+          { "title": "Reducibility between Problems" },
+          { "title": "Complexity Classes (P, NP, BPP)" }
+        ]
+      },
+      {
+        "title": "Advanced Computation Theory",
+        "topics": [
+          { "title": "Lambda Calculus" },
+          { "title": "Turing Machines and Their Variants" },
+          { "title": "Complexity of Algorithms" },
+          { "title": "Approximation Algorithms and Hardness" },
+          { "title": "Quantum Computation" },
+          { "title": "Non-Deterministic Automata" },
+          { "title": "Polynomial Hierarchy" },
+          { "title": "BPP and Quantum Complexity" },
+          { "title": "Algebraic Complexity" },
+          { "title": "Quantum Algorithms" }
         ]
       }
     ]
