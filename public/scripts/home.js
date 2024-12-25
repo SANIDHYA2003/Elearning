@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const exploreBtn = document.getElementById('exploreBtn');
     const courseList = document.getElementById('courseList');
-    const userInfo = document.getElementById('userInfo');
+    const userInfoContainer = document.getElementById("user-info-container");
+
 
 
     const signupBtn = document.getElementById('signupBtn');
@@ -14,6 +15,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
 
 
+    // Add CSS for animations and styling
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Keeps other nav items aligned properly */
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-items {
+    display: flex;
+    gap: 20px; /* Adds spacing between navigation items */
+}
+
+.user-info {
+    position: absolute; /* Removes it from the normal flow */
+    right: 20px; /* Positions it to the far-right edge */
+    top: 50%; /* Vertically aligns it */
+    transform: translateY(-50%); /* Corrects vertical alignment */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds spacing between elements in the user-info container */
+    background-color: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.user-info .coin-icon {
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+#signout-btn {
+    background-color: #a80d0d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#signout-btn:hover {
+    background-color: #FF0000;
+}
+Key Changes:
+        .bi-person-circle {
+            font-size: 24px;
+            color: #007bff;
+            margin-right: 8px;
+        }
+        .bi-coin {
+            font-size: 20px;
+            color: #ffd700;
+            margin-right: 5px;
+        }
+    `;
+    document.head.appendChild(style);
 
 
     // Open modals
@@ -27,10 +104,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
 
+    // Function to fetch updated coin info for the logged-in user
+    async function fetchUserCoins(userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}/coins`);
+            if (response.ok) {
+                const { rewardCoins } = await response.json();
+                return rewardCoins;
+            } else {
+                console.error('Failed to fetch updated coin info');
+            }
+        } catch (error) {
+            console.error('Error fetching user coins:', error);
+        }
+        return null; // Return null if fetching fails
+    }
+
+    // Function to update only the coins dynamically
+    async function updateUserCoins() {
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            const updatedCoins = await fetchUserCoins(user._id);
+
+            if (updatedCoins !== null) {
+                user.rewardCoins = updatedCoins; // Update the user's coins in localStorage
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+                // Update the coin display in the UI
+                const coinElement = userInfoContainer.querySelector('.bi-coin').parentNode;
+                if (coinElement) {
+                    coinElement.textContent = `${updatedCoins} Coins`;
+                }
+            }
+        }
+    }
 
 
 
-    
     // Fetch courses from the backend
     async function fetchCourses() {
         try {
@@ -78,26 +189,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
- 
 
-    // Display user information
-    async function displayUserInfo() {
-        try {
-            const user = await fetchUserData();
-            if (user) {
-                userInfo.innerHTML = `
-                    <h3>${user.name}</h3>
-                    <p>Email: ${user.email}</p>
-                    <h4>Enrolled Courses:</h4>
-                    <ul>
-                        ${user.enrolledCourses.map(course => `<li>${course.title}</li>`).join('')}
-                    </ul>
-                `;
-            }
-        } catch (error) {
-            console.error('Error displaying user info:', error);
+
+    // Function to update user info after login
+    function showUserInfo(user) {
+        // Clear previous data
+        userInfoContainer.innerHTML = '';
+
+        // Update the display
+        userInfoContainer.innerHTML = `
+    <div class="user-info">
+        <span><i class="bi bi-person-circle"></i> ${user.name}</span>
+        <span><i class="bi bi-coin"></i> ${user.rewardCoins} Coins</span>
+        <button id="signout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
+    </div>`;
+
+        // Hide login/signup buttons
+        loginBtn.style.display = 'none';
+        signupBtn.style.display = 'none';
+
+        // Add functionality to the signout button
+        const signoutBtn = document.getElementById("signout-btn");
+        signoutBtn.addEventListener("click", () => {
+            localStorage.removeItem('loggedInUser');
+            userInfoContainer.innerHTML = '';
+            loginBtn.style.display = 'inline-block';
+            signupBtn.style.display = 'inline-block';
+        });
+
+     
+    }
+
+
+    // Initialize user info from localStorage
+    function initializeUserInfo() {
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            showUserInfo(user);
         }
     }
+
 
 
     // Handle Signup
@@ -130,36 +262,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle Login
+    // Handle login
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const loginData = {
-            email: document.getElementById('loginEmail').value,
-            password: document.getElementById('loginPassword').value,
-        };
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
 
         try {
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(loginData),
+                body: JSON.stringify({ email, password }),
             });
-            const result = await response.json();
+            const { user } = await response.json();
             if (response.ok) {
-                alert('Login successful!');
+                // Save updated user info to localStorage
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                // Show the updated user info
+                showUserInfo(user);
+                // Close the login modal
                 loginModal.style.display = 'none';
             } else {
-                alert(`Error: ${result.error}`);
+                alert('Login failed!');
             }
         } catch (error) {
-            console.error('Login failed:', error);
+            console.error('Login error:', error);
         }
     });
+
+
+    async function handleActionThatEarnsCoins() {
+        await updateUserCoins(); // Refresh the coin display
+    }
 
     // Initialize
     exploreBtn.addEventListener('click', () => {
         document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
     });
 
+
+
+    initializeUserInfo();
     displayCourses();
     displayUserInfo();
+    
 });

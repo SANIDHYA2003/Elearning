@@ -189,7 +189,7 @@ app.post('/api/signup', async (req, res) => {
     const { name, email, organization, phone, password } = req.body;
 
     try {
-       
+
         const newUser = new User({ name, email, organization, phone, password });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
@@ -265,6 +265,25 @@ app.post('/api/generate-content', async (req, res) => {
         });
     }
 });
+
+// Fetch user's coin balance
+app.get('/api/user/:id/coins', async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Fetch user from database
+        const user = await User.findById(userId, 'rewardCoins');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ rewardCoins: user.rewardCoins });
+    } catch (error) {
+        console.error('Error fetching user coins:', error.message);
+        res.status(500).json({ error: 'Failed to fetch user coins' });
+    }
+});
+
 
 
 // Serve the addcourse.html file
