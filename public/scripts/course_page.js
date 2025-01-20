@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const courseId = window.location.pathname.split('/').pop(); // Extract course ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get('id');
+    const courseType = urlParams.get('type');
     const courseTitle = document.getElementById('courseTitle');
     const courseStructure = document.getElementById('courseStructure');
     const topicTitle = document.getElementById('topicTitle');
@@ -11,8 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let topics = [];
 
     async function fetchCourseDetails() {
+        if (!courseType || (courseType !== 'free' && courseType !== 'paid')) {
+            courseStructure.innerHTML = '<p>Invalid course type. Please check the URL and try again.</p>';
+            return null;
+        }
+
         try {
-            const response = await fetch(`/api/courses/by-id/${courseId}`); // Updated route
+            const endpoint = courseType === 'paid'
+                ? `/api/paid-courses/by-id/${courseId}`
+                : `/api/courses/by-id/${courseId}`;
+
+            const response = await fetch(endpoint);
             if (!response.ok) {
                 throw new Error('Failed to fetch course details');
             }
@@ -22,6 +33,109 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
     }
+
+    function renderCourseStructure(course) {
+        courseTitle.textContent = course.title || course.name || 'Untitled Course';
+        topics = course.modules.flatMap(module => module.topics);
+
+        if (!topics.length) {
+            courseStructure.innerHTML = '<p>No topics available for this course.</p>';
+            return;
+        }
+
+        let globalIndex = 0;
+
+        courseStructure.innerHTML = course.modules.map(module => `
+            <div class="module">
+                <div class="module-title">${module.title}</div>
+                <ul class="topic-list">
+                    ${module.topics.map(topic => `
+                        <li class="topic" data-index="${globalIndex++}">${topic.title}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        `).join('');
+
+        document.querySelectorAll('.topic').forEach(topicElement => {
+            topicElement.addEventListener('click', (event) => {
+                const clickedIndex = parseInt(event.target.getAttribute('data-index'), 10);
+                if (!isNaN(clickedIndex)) {
+                    currentTopicIndex = clickedIndex;
+                    loadTopic(topics[currentTopicIndex]);
+                }
+            });
+        });
+
+        loadTopic(topics[0]); // Load the first topic by default
+    }
+
+    async function loadTopic(topic) {
+        if (!topic) {
+            console.warn('No topic available to load.');
+            return;
+        }
+
+        // Clear active topic highlighting and set new active topic
+        document.querySelectorAll('.topic').forEach(el => el.classList.remove('active-topic'));
+        document.querySelector(`.topic[data-index="${currentTopicIndex}"]`).classList.add('active-topic');
+
+        // Set topic title
+        topicTitle.textContent = topic.title;
+
+        // Start loading content
+        topicContent.classList.add('loading');
+        topicContent.innerHTML = '<p>Loading content...</p>';
+
+        if (courseType === 'paid') {
+            // Add video, content, and notes button for paid courses
+            topicContent.innerHTML = `
+        <div class="video-section">
+            <!-- Embed YouTube video -->
+            ${topic.video ? `
+                <iframe width="640" height="360" src="https://www.youtube.com/embed/${getYouTubeVideoId(topic.video)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            ` : '<p>No video available for this topic.</p>'}
+        </div>
+        <div class="content-section">
+            ${topic.content || '<p>No content available for this topic.</p>'}
+        </div>
+        <div class="notes-download">
+            <button id="downloadNotesButton">Download Notes</button>
+        </div>
+        `;
+
+            // Add event listener for download button
+            const downloadButton = document.getElementById('downloadNotesButton');
+            downloadButton.addEventListener('click', () => {
+                if (topic.notesUrl) {
+                    window.open(topic.notesUrl, '_blank');
+                } else {
+                    alert('Notes are not available for this topic.');
+                }
+            });
+        } else if (courseType === 'free') {
+            // Generate content for free courses
+            const content = await generateContent(topic.title);
+            topicContent.innerHTML = `
+        <div class="content-section">
+            ${content}
+        </div>
+        `;
+        }
+
+        // Stop loading content
+        topicContent.classList.remove('loading');
+
+        // Update navigation buttons
+        updateNavigationButtons();
+    }
+
+    // Helper function to extract YouTube video ID from a shareable URL
+    function getYouTubeVideoId(url) {
+        const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
 
     async function generateContent(topic) {
         try {
@@ -41,48 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderCourseStructure(course) {
-        courseTitle.textContent = course.title;
-        topics = course.modules.flatMap(module => module.topics);
-
-        courseStructure.innerHTML = course.modules.map(module => `
-            <div class="module">
-                <div class="module-title">${module.title}</div>
-                <ul class="topic-list">
-                    ${module.topics.map(topic => `
-                        <li class="topic" data-topic="${topic.title}">${topic.title}</li>
-                    `).join('')}
-                </ul>
-            </div>
-        `).join('');
-
-        document.querySelectorAll('.topic').forEach((topicElement, index) => {
-            topicElement.addEventListener('click', () => {
-                currentTopicIndex = index;
-                loadTopic(topicElement.getAttribute('data-topic'));
-            });
-        });
-
-        if (topics.length > 0) {
-            loadTopic(topics[0].title);
-        }
-    }
-
-    async function loadTopic(topic) {
-        document.querySelectorAll('.topic').forEach(el => el.classList.remove('active-topic'));
-        document.querySelector(`.topic[data-topic="${topic}"]`).classList.add('active-topic');
-        topicTitle.textContent = topic;
-
-        topicContent.classList.add('loading');
-        topicContent.innerHTML = '<p>Loading content...</p>';
-
-        const content = await generateContent(topic);
-
-        topicContent.innerHTML = content;
-        topicContent.classList.remove('loading');
-        updateNavigationButtons();
-    }
-
     function updateNavigationButtons() {
         prevButton.disabled = currentTopicIndex === 0;
         nextButton.disabled = currentTopicIndex === topics.length - 1;
@@ -91,14 +163,14 @@ document.addEventListener('DOMContentLoaded', () => {
     prevButton.addEventListener('click', () => {
         if (currentTopicIndex > 0) {
             currentTopicIndex--;
-            loadTopic(topics[currentTopicIndex].title);
+            loadTopic(topics[currentTopicIndex]);
         }
     });
 
     nextButton.addEventListener('click', () => {
         if (currentTopicIndex < topics.length - 1) {
             currentTopicIndex++;
-            loadTopic(topics[currentTopicIndex].title);
+            loadTopic(topics[currentTopicIndex]);
         }
     });
 
@@ -113,4 +185,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializePage();
 });
-

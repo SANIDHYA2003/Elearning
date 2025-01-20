@@ -2,83 +2,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const exploreBtn = document.getElementById('exploreBtn');
     const courseList = document.getElementById('courseList');
     const userInfoContainer = document.getElementById("user-info-container");
-
-
-
+    const exclusiveCoursesContainer = document.getElementById('exclusiveCoursesContainer');
     const signupBtn = document.getElementById('signupBtn');
     const loginBtn = document.getElementById('loginBtn');
     const signupModal = document.getElementById('signupModal');
     const loginModal = document.getElementById('loginModal');
     const closeButtons = document.querySelectorAll('.close');
-
     const signupForm = document.getElementById('signupForm');
     const loginForm = document.getElementById('loginForm');
 
-
-    // Add CSS for animations and styling
+    // Add CSS for animations and styling dynamically
     const style = document.createElement('style');
     style.textContent = `
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-.navbar {
-    display: flex;
-    justify-content: space-between; /* Keeps other nav items aligned properly */
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.navbar .nav-items {
-    display: flex;
-    gap: 20px; /* Adds spacing between navigation items */
-}
-
-.user-info {
-    position: absolute; /* Removes it from the normal flow */
-    right: 20px; /* Positions it to the far-right edge */
-    top: 50%; /* Vertically aligns it */
-    transform: translateY(-50%); /* Corrects vertical alignment */
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Adds spacing between elements in the user-info container */
-    background-color: #f9f9f9;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.5s ease-out;
-}
-
-.user-info span {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-}
-
-.user-info .coin-icon {
-    width: 25px;
-    height: 25px;
-    margin-left: 5px;
-    vertical-align: middle;
-}
-
-#signout-btn {
-    background-color: #a80d0d;
-    color: white;
-    font-weight: bold;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#signout-btn:hover {
-    background-color: #FF0000;
-}
-Key Changes:
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .nav-items {
+            display: flex;
+            gap: 20px;
+        }
+        .user-info {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        .user-info span {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
         .bi-person-circle {
             font-size: 24px;
             color: #007bff;
@@ -89,9 +59,21 @@ Key Changes:
             color: #ffd700;
             margin-right: 5px;
         }
+        #signout-btn {
+            background-color: #a80d0d;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #signout-btn:hover {
+            background-color: #FF0000;
+        }
     `;
     document.head.appendChild(style);
-
 
     // Open modals
     signupBtn.addEventListener('click', () => signupModal.style.display = 'block');
@@ -103,7 +85,6 @@ Key Changes:
         loginModal.style.display = 'none';
     }));
 
-
     // Function to fetch updated coin info for the logged-in user
     async function fetchUserCoins(userId) {
         try {
@@ -112,7 +93,7 @@ Key Changes:
                 const { rewardCoins } = await response.json();
                 return rewardCoins;
             } else {
-                console.error('Failed to fetch updated coin info');
+                console.error('Failed to fetch updated coin info.');
             }
         } catch (error) {
             console.error('Error fetching user coins:', error);
@@ -139,8 +120,6 @@ Key Changes:
             }
         }
     }
-
-
 
     // Fetch courses from the backend
     async function fetchCourses() {
@@ -174,7 +153,7 @@ Key Changes:
                 <h3>${course.title || 'Untitled Course'}</h3>
                 <p>Category: ${course.category || 'Uncategorized'}</p>
                 <p>Modules: ${course.modules?.length || 0}</p>
-                <button class="view-course-btn" data-id="${course._id}">View Course</button>
+                <button class="view-course-btn" data-id="${course._id}" data-type="free">View Course</button>
             </div>
         `).join('');
 
@@ -182,44 +161,93 @@ Key Changes:
         document.querySelectorAll('.view-course-btn').forEach(button => {
             button.addEventListener('click', (e) => {
                 const courseId = e.target.getAttribute('data-id');
-                if (courseId) {
-                    window.location.href = `/course/${courseId}?id=${courseId}`;
+                const courseType = e.target.getAttribute('data-type'); // Get course type
+                if (courseId && courseType) {
+                    window.location.href = `/course/${courseId}?id=${courseId}&type=${courseType}`;
                 }
             });
         });
     }
 
+    // Display exclusive courses
+    async function fetchExclusiveCourses() {
+        try {
+            console.log('Requesting exclusive courses from backend...');
+            const response = await fetch('/api/paid-courses');
+            if (!response.ok) {
+                console.error(`Error fetching exclusive courses. HTTP Status: ${response.status}`);
+                return [];
+            }
+            const data = await response.json();
+            console.log('Exclusive courses fetched successfully:', data);
+            return data;
+        } catch (error) {
+            console.error('Error fetching exclusive courses:', error);
+            return [];
+        }
+    }
+
+    // Display exclusive courses
+    async function displayExclusiveCourses() {
+        try {
+            console.log('Attempting to display exclusive courses...');
+            const courses = await fetchExclusiveCourses();
+
+            if (!Array.isArray(courses) || courses.length === 0) {
+                console.warn('No exclusive courses found to display.');
+                exclusiveCoursesContainer.innerHTML = `<p>No exclusive courses available at the moment.</p>`;
+                return;
+            }
+
+            exclusiveCoursesContainer.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <img src="${course.thumbnail}" alt="${course.name}" class="course-thumbnail" />
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                    <p><strong>Price:</strong> $${course.price}</p>
+                    <p><strong>Level:</strong> ${course.level}</p>
+                    <p><strong>Modules:</strong> ${course.modules.map(module => module.title).join(', ')}</p>
+                    <button class="view-course-btn" data-id="${course._id}" data-type="paid">View Paid Course</button>
+                </div>
+            `).join('');
+
+            // Add event listeners to "Enrolled" buttons
+            document.querySelectorAll('.enroll-course-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const courseId = e.target.getAttribute('data-id'); // Get course ID
+                    const courseType = e.target.getAttribute('data-type'); // Get course type
+                    if (courseId && courseType) {
+                        // Navigate to course_enroll.html with course ID and type in query parameters
+                        window.location.href = `/course_enroll.html?id=${courseId}&type=${courseType}`;
+                    }
+                });
+            });
 
 
-    // Function to update user info after login
+            console.log('Exclusive courses displayed successfully.');
+        } catch (error) {
+            console.error('Error displaying exclusive courses:', error);
+        }
+    }
+
+    // Show user info
     function showUserInfo(user) {
-        // Clear previous data
-        userInfoContainer.innerHTML = '';
-
-        // Update the display
         userInfoContainer.innerHTML = `
-    <div class="user-info">
-        <span><i class="bi bi-person-circle"></i> ${user.name}</span>
-        <span><i class="bi bi-coin"></i> ${user.rewardCoins} Coins</span>
-        <button id="signout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
-    </div>`;
-
-        // Hide login/signup buttons
+            <div class="user-info">
+                <span><i class="bi bi-person-circle"></i> ${user.name}</span>
+                <span><i class="bi bi-coin"></i> ${user.rewardCoins} Coins</span>
+                <button id="signout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
+            </div>`;
         loginBtn.style.display = 'none';
         signupBtn.style.display = 'none';
 
-        // Add functionality to the signout button
-        const signoutBtn = document.getElementById("signout-btn");
-        signoutBtn.addEventListener("click", () => {
+        document.getElementById("signout-btn").addEventListener("click", () => {
             localStorage.removeItem('loggedInUser');
             userInfoContainer.innerHTML = '';
             loginBtn.style.display = 'inline-block';
             signupBtn.style.display = 'inline-block';
         });
-
-     
     }
-
 
     // Initialize user info from localStorage
     function initializeUserInfo() {
@@ -230,9 +258,7 @@ Key Changes:
         }
     }
 
-
-
-    // Handle Signup
+    // Handle signup
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const userData = {
@@ -261,7 +287,6 @@ Key Changes:
         }
     });
 
-    // Handle Login
     // Handle login
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -276,11 +301,8 @@ Key Changes:
             });
             const { user } = await response.json();
             if (response.ok) {
-                // Save updated user info to localStorage
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
-                // Show the updated user info
                 showUserInfo(user);
-                // Close the login modal
                 loginModal.style.display = 'none';
             } else {
                 alert('Login failed!');
@@ -290,20 +312,12 @@ Key Changes:
         }
     });
 
-
-    async function handleActionThatEarnsCoins() {
-        await updateUserCoins(); // Refresh the coin display
-    }
-
-    // Initialize
+    // Initialize the page
     exploreBtn.addEventListener('click', () => {
         document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
     });
 
-
-
     initializeUserInfo();
     displayCourses();
-    displayUserInfo();
-    
+    displayExclusiveCourses();
 });

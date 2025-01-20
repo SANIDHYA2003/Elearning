@@ -75,6 +75,51 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 
+// PaidCourse Schema
+const PaidCourseSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    modules: [
+        {
+            title: { type: String, required: true },
+            topics: [
+                {
+                    title: { type: String, required: true },
+                    content: { type: String, required: true }, // Content for each topic
+                    video: { type: String, required: true }, // Video link for the topic
+                    notes: { type: String, required: true }, // Download link for the topic notes
+                },
+            ],
+        },
+    ],
+    project: [{
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+        modules: [
+            {
+                title: { type: String, required: true },
+                topics: [
+                    {
+                        title: { type: String, required: true },
+                        content: { type: String, required: true },
+                    },
+                ],
+            },
+        ],
+    }],
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    dates: { start: Date, end: Date },
+    level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
+    thumbnail: { type: String, required: true },
+    headerback: { type: String, required: true },
+    languages: [{ type: String, required: true }], // List of available languages
+    keySkills: [{ type: String, required: true }], // Key skills included in the course
+});
+
+const PaidCourse = mongoose.model('PaidCourse', PaidCourseSchema);
+
+
+
 
 // AI Configuration
 const API_KEY = process.env.GEMINI_API_KEY;
@@ -266,6 +311,91 @@ app.post('/api/generate-content', async (req, res) => {
     }
 });
 
+
+// Route to fetch exclusive courses
+app.get('/api/paid-courses', async (req, res) => {
+    try {
+        console.log('Fetching exclusive courses...');
+        const courses = await PaidCourse.find({});
+        console.log(`Fetched ${courses.length} courses`);
+        res.json(courses);
+    } catch (error) {
+        console.error('Error fetching exclusive courses:', error.message);
+        res.status(500).json({ error: 'Failed to fetch exclusive courses' });
+    }
+});
+
+
+app.get('/api/paid-courses/by-id/:id', async (req, res) => {
+    const { id } = req.params; // Extract course ID from the route parameters
+    try {
+        // Validate the ID format (if using MongoDB, check for a valid ObjectId)
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid course ID format' });
+        }
+
+        // Fetch the course by ID
+        const course = await PaidCourse.findById(id);
+
+        // Check if the course exists
+        if (!course) {
+            return res.status(404).json({ error: 'Paid course not found' });
+        }
+
+        // Respond with the course data
+        res.json(course);
+    } catch (error) {
+        console.error('Error fetching paid course:', error.message);
+
+        // Return a more detailed error message for debugging (optional)
+        res.status(500).json({
+            error: 'An error occurred while fetching the paid course',
+            message: error.message, // Remove in production for security
+        });
+    }
+});
+
+
+
+// Route to fetch related paid courses based on key skills
+app.get('/api/related-paid-courses/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Validate course ID format
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid course ID format' });
+        }
+
+        // Find the current course
+        const currentCourse = await Course.findById(id);
+        if (!currentCourse) {
+            return res.status(404).json({ error: 'Current course not found' });
+        }
+
+        // Find related paid courses by key skills
+        const relatedCourses = await PaidCourse.find({
+            keySkills: { $in: currentCourse.keySkills }, // Match any skill
+        });
+
+        // Handle case when no related courses are found
+        if (relatedCourses.length === 0) {
+            return res.status(404).json({ error: 'No related paid courses found' });
+        }
+
+        // Respond with the related courses
+        res.json(relatedCourses);
+    } catch (error) {
+        console.error('Error fetching related paid courses:', error.message);
+        res.status(500).json({
+            error: 'Failed to fetch related paid courses',
+            message: error.message, // Optional: Include in debug mode only
+        });
+    }
+});
+
+
+
 // Fetch user's coin balance
 app.get('/api/user/:id/coins', async (req, res) => {
     try {
@@ -297,6 +427,11 @@ app.get('/addcourse', (req, res) => {
     });
 });
 
+
+
+
+
+
 // Add this route before the catch-all route
 app.get('/course/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'course_page.html'));
@@ -306,6 +441,17 @@ app.get('/course/:id', (req, res) => {
 app.get('*', (req, res) => {
     if (!req.path.startsWith('/course/')) {
         res.sendFile(path.join(__dirname, 'public', 'home.html'));
+    }
+});
+
+// Route to fetch exclusive courses
+app.get('/api/paid-courses', async (req, res) => {
+    try {
+        const courses = await PaidCourse.find({});
+        res.json(courses);
+    } catch (error) {
+        console.error('Error fetching exclusive courses:', error.message);
+        res.status(500).json({ error: 'Failed to fetch exclusive courses' });
     }
 });
 

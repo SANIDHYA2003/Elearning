@@ -1,44 +1,71 @@
 [
     {
-        "id": "course1",
-        "title": "Advanced JavaScript",
-        "description": "A comprehensive course covering advanced JavaScript concepts for web development.",
-        "price": 99.99,
+        "name": "Full-Stack Web Development",
         "modules": [
             {
-                "id": "module1",
-                "title": "JavaScript Essentials",
-                "topics": ["Variables", "Functions", "Scopes", "Closures"]
+                "title": "Frontend Development",
+                "topics": [
+                    {
+                        "title": "HTML Basics",
+                        "content": "Learn the fundamentals of HTML, the building blocks of web pages.",
+                        "video": "https://www.youtube.com/watch?v=UB1O30fR-EE",
+                        "notes": "https://example.com/notes/html-basics.pdf"
+                    },
+                    {
+                        "title": "CSS Styling",
+                        "content": "Understand how to style web pages using CSS.",
+                        "video": "https://www.youtube.com/watch?v=yfoY53QXEnI",
+                        "notes": "https://example.com/notes/css-styling.pdf"
+                    }
+                ]
             },
             {
-                "id": "module2",
-                "title": "Asynchronous JavaScript",
-                "topics": ["Promises", "Async/Await", "Event Loop"]
+                "title": "Backend Development",
+                "topics": [
+                    {
+                        "title": "Introduction to Node.js",
+                        "content": "Get started with Node.js for backend development.",
+                        "video": "https://www.youtube.com/watch?v=TlB_eWDSMt4",
+                        "notes": "https://example.com/notes/nodejs-introduction.pdf"
+                    }
+                ]
             }
         ],
-        "duration": "10 hours",
+        "project":[ {
+            "title": "E-Commerce Website",
+            "description": "Build a fully functional e-commerce platform with user authentication and shopping cart features.",
+            "modules": [
+                {
+                    "title": "Project Setup",
+                    "topics": [
+                        {
+                            "title": "Initializing the Project",
+                            "content": "Learn how to set up the project structure and dependencies."
+                        }
+                    ]
+                },
+                {
+                    "title": "Adding Features",
+                    "topics": [
+                        {
+                            "title": "Implementing User Authentication",
+                            "content": "Add user login and registration functionality."
+                        }
+                    ]
+                }
+            ]
+        }],
+        "description": "Master full-stack web development with this comprehensive course covering frontend and backend technologies.",
+        "price": 199.99,
+        "dates": {
+            "start": "2024-01-01",
+            "end": "2024-12-31"
+        },
         "level": "Intermediate",
-        "thumbnail": "javascript-course-thumbnail.jpg"
-    },
-    {
-        "id": "course2",
-        "title": "Mastering Python",
-        "description": "Learn Python programming from beginner to advanced level with real-world projects.",
-        "price": 129.99,
-        "modules": [
-            {
-                "id": "module1",
-                "title": "Introduction to Python",
-                "topics": ["Syntax", "Data Types", "Control Flow"]
-            },
-            {
-                "id": "module2",
-                "title": "Python for Data Science",
-                "topics": ["Numpy", "Pandas", "Data Visualization"]
-            }
-        ],
-        "duration": "12 hours",
-        "level": "Beginner to Advanced",
-        "thumbnail": "python-course-thumbnail.jpg"
+        "thumbnail": "https://example.com/images/fullstack-thumbnail.jpg",
+        "languages": ["English", "Spanish", "German"],
+        "keySkills": ["HTML", "CSS", "JavaScript", "Node.js", "Express", "MongoDB"]
     }
+
+
 ]

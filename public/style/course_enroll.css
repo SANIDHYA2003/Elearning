@@ -1,0 +1,352 @@
+:root {
+    --primary-blue: #0056D2;
+    --secondary-blue: #2D76F9;
+    --accent-blue: #E5F0FF;
+    --success-green: #28a745;
+    --warning-yellow: #ffc107;
+    --danger-red: #dc3545;
+    --text-primary: #2C3E50;
+    --text-secondary: #6c757d;
+    --text-white: #ffffff;
+    --border-color: #e9ecef;
+    --star-color: #FFD700;
+    --box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    --box-shadow-hover: 0 8px 16px rgba(0,0,0,0.12);
+    --transition: all 0.3s ease;
+}
+
+
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: #f8f9fa;
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.course-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    position: relative;
+    padding: 3rem 0 4rem;
+    animation: slideInTop 0.8s ease;
+    background-size: cover;
+    background-position: center;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-white);
+}
+
+h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 1.5rem;
+    color: var(--text-white);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: zoomIn 0.6s ease;
+}
+
+.rating-container,
+.enrollment-section,
+.financial-aid,
+.enrollment-count {
+    color: var(--text-white);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.stars {
+    color: var(--star-color);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.enroll-btn,.enroll-course-btn {
+    background: var(--primary-blue);
+    color: var(--text-white);
+    padding: 1rem 2.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    box-shadow: var(--box-shadow);
+    animation: fadeInUp 1s ease;
+}
+
+.enroll-btn:hover,.enroll-course-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
+    background: var(--secondary-blue);
+}
+
+/* Keyframes for animations */
+@keyframes slideInTop {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+.chapter {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: white;
+    transition: var(--transition);
+    animation: slideInBottom 0.8s ease;
+}
+
+.chapter:hover {
+    box-shadow: var(--box-shadow);
+    transform: translateY(-5px);
+}
+
+.chapter-header {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.chapter-header:hover {
+    background-color: var(--accent-blue);
+}
+
+.chapter-content {
+    display: none;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.chapter.active .chapter-content {
+    display: block;
+}
+
+@keyframes slideInBottom {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.skill-tag {
+    background: var(--accent-blue);
+    color: var(--primary-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: var(--transition);
+    animation: popIn 0.6s ease;
+}
+
+.skill-tag:hover {
+    background: var(--primary-blue);
+    color: white;
+    transform: translateY(-1px) scale(1.05);
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.features-list li {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 0.75rem;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    animation: bounceInLeft 1s ease;
+}
+
+.features-list li:hover {
+    background: var(--accent-blue);
+    transform: translateX(10px);
+}
+
+@keyframes bounceInLeft {
+    from {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+.related-courses {
+    margin-top: 2rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+}
+
+.related-courses-grid {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 1rem;
+    width: max-content;
+}
+
+.course-thumbnail {
+    width: 100%;
+    height: 180px; /* Fixed height for all thumbnails */
+    object-fit: cover;
+    object-position: center;
+}
+
+
+.course-card {
+    width: 300px; /* Set the width */
+    height: auto; /* Set the height */
+    border-radius: 12px;
+    background: white;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    animation: fadeInRight 1s ease;
+    display: flex; /* Enable flex for direction control */
+    flex-direction: column; /* Set the row-reverse direction */
+    overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+@keyframes fadeInRight {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.language-tag {
+    background: var(--accent-blue);
+    color: var(--primary-blue);
+    padding: 0.4rem 1rem;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    animation: slideInRight 0.8s ease;
+}
+
+.language-tag:hover {
+    background: var(--primary-blue);
+    color: white;
+    transform: translateX(5px);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.content-left section,
+.content-right section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    animation: expandIn 0.8s ease;
+}
+
+.content-left section:hover,
+.content-right section:hover {
+    box-shadow: var(--box-shadow-hover);
+    transform: scale(1.02);
+}
+
+@keyframes expandIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+}
