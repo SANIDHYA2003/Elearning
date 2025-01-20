@@ -7,8 +7,10 @@ const cors = require('cors');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const MarkdownIt = require('markdown-it');
 
 const app = express();
+const md = new MarkdownIt();
 const port = process.env.PORT || 3000;
 
 // Middleware
@@ -84,36 +86,22 @@ const PaidCourseSchema = new mongoose.Schema({
             topics: [
                 {
                     title: { type: String, required: true },
-                    content: { type: String, required: true }, // Content for each topic
-                    video: { type: String, required: true }, // Video link for the topic
-                    notes: { type: String, required: true }, // Download link for the topic notes
+                    content: { type: String, required: true }, // Markdown/HTML content
+                    video: { type: String }, // Video link
+                    notes: { type: String }, // Notes link
+                    images: [{ type: String }], // Array of image URLs
                 },
             ],
         },
     ],
-    project: [{
-        title: { type: String, required: true },
-        description: { type: String, required: true },
-        modules: [
-            {
-                title: { type: String, required: true },
-                topics: [
-                    {
-                        title: { type: String, required: true },
-                        content: { type: String, required: true },
-                    },
-                ],
-            },
-        ],
-    }],
     description: { type: String, required: true },
     price: { type: Number, required: true },
     dates: { start: Date, end: Date },
     level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
     thumbnail: { type: String, required: true },
     headerback: { type: String, required: true },
-    languages: [{ type: String, required: true }], // List of available languages
-    keySkills: [{ type: String, required: true }], // Key skills included in the course
+    languages: [{ type: String, required: true }],
+    keySkills: [{ type: String, required: true }],
 });
 
 const PaidCourse = mongoose.model('PaidCourse', PaidCourseSchema);
@@ -328,6 +316,7 @@ app.get('/api/paid-courses', async (req, res) => {
 
 app.get('/api/paid-courses/by-id/:id', async (req, res) => {
     const { id } = req.params; // Extract course ID from the route parameters
+
     try {
         // Validate the ID format (if using MongoDB, check for a valid ObjectId)
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -342,7 +331,31 @@ app.get('/api/paid-courses/by-id/:id', async (req, res) => {
             return res.status(404).json({ error: 'Paid course not found' });
         }
 
-        // Respond with the course data
+        // Format each topic to include combined markdown content and images
+        course.modules.forEach(module => {
+            module.topics.forEach(topic => {
+                // Convert markdown content to HTML
+                const markdown = topic.content || 'No content available for this topic.';
+                const htmlContent = md.render(markdown);
+
+                // Append images to the content
+                const imagesHtml = (topic.images || [])
+                    .map(imgUrl => `<img src="${imgUrl}" alt="Topic Image" style="max-width: 100%; margin-bottom: 15px;">`)
+                    .join('');
+
+                // Combine markdown HTML and images
+                topic.formattedContent = `
+                    <div class="topic-content">
+                        ${htmlContent}
+                        <div class="images-section">
+                            ${imagesHtml || '<p>No images available for this topic.</p>'}
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        // Respond with the formatted course data
         res.json(course);
     } catch (error) {
         console.error('Error fetching paid course:', error.message);
@@ -354,8 +367,6 @@ app.get('/api/paid-courses/by-id/:id', async (req, res) => {
         });
     }
 });
-
-
 
 // Route to fetch related paid courses based on key skills
 app.get('/api/related-paid-courses/:id', async (req, res) => {

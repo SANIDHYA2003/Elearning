@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTopicIndex = 0;
     let topics = [];
 
+    // Initialize markdown-it parser
+    const md = window.markdownit();
+
     async function fetchCourseDetails() {
         if (!courseType || (courseType !== 'free' && courseType !== 'paid')) {
             courseStructure.innerHTML = '<p>Invalid course type. Please check the URL and try again.</p>';
@@ -87,7 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
         topicContent.innerHTML = '<p>Loading content...</p>';
 
         if (courseType === 'paid') {
-            // Add video, content, and notes button for paid courses
+            // Render markdown content, including inline images
+            const markdownContent = topic.content ? md.render(topic.content) : '<p>No content available for this topic.</p>';
+
             topicContent.innerHTML = `
         <div class="video-section">
             <!-- Embed YouTube video -->
@@ -96,12 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ` : '<p>No video available for this topic.</p>'}
         </div>
         <div class="content-section">
-            ${topic.content || '<p>No content available for this topic.</p>'}
+            ${markdownContent}
         </div>
         <div class="notes-download">
             <button id="downloadNotesButton">Download Notes</button>
         </div>
-        `;
+    `;
 
             // Add event listener for download button
             const downloadButton = document.getElementById('downloadNotesButton');
@@ -112,7 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Notes are not available for this topic.');
                 }
             });
-        } else if (courseType === 'free') {
+        }
+
+  else if (courseType === 'free') {
             // Generate content for free courses
             const content = await generateContent(topic.title);
             topicContent.innerHTML = `
