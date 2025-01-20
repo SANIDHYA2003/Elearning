@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Price:</strong> $${course.price}</p>
                     <p><strong>Level:</strong> ${course.level}</p>
                     <p><strong>Modules:</strong> ${course.modules.map(module => module.title).join(', ')}</p>
-                    <button class="view-course-btn" data-id="${course._id}" data-type="paid">View Paid Course</button>
+                    <button class="enroll-course-btn" data-id="${course._id}" data-type="paid">View Paid Course</button>
                 </div>
             `).join('');
 
