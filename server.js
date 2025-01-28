@@ -440,7 +440,22 @@ app.get('/addcourse', (req, res) => {
 
 
 
+// Add payment processing endpoint
+app.post('/api/process-payment', async (req, res) => {
+    try {
+        const { courseId, userId, amount, couponCode } = req.body;
 
+        // Validate payment details
+        // Check coupon validity
+        // Deduct from wallet balance
+        // Add course to user's enrolled courses
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Payment processing error:', error);
+        res.status(500).json({ success: false, error: 'Payment failed' });
+    }
+});
 
 
 // Add this route before the catch-all route

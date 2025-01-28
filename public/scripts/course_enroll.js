@@ -2,12 +2,25 @@ document.addEventListener('DOMContentLoaded', async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const courseId = urlParams.get('id');
     const courseType = urlParams.get('type');
+    let currentCourse = null; // Added for payment flow
 
-    if (!courseId || !courseType) {
-        document.querySelector('.course-container').innerHTML = '<p>Invalid course data. Please try again.</p>';
-        return;
-    }
+    // Payment modal elements
+    const cartModal = document.getElementById('cartModal');
+    const confirmModal = document.getElementById('confirmationModal');
+    const closeSpans = document.querySelectorAll('.close');
 
+    // Modal close handlers
+    closeSpans.forEach(span => {
+        span.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+            confirmModal.style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === cartModal) cartModal.style.display = 'none';
+        if (e.target === confirmModal) confirmModal.style.display = 'none';
+    });
     // Fetch course details dynamically
     async function fetchCourseDetails() {
         const endpoint = courseType === 'paid'
@@ -42,28 +55,40 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Main render function
+    // Modified renderCourseDetails function with payment flow
     async function renderCourseDetails() {
         const course = await fetchCourseDetails();
         if (!course) {
-            document.querySelector('.course-container').innerHTML = 
+            document.querySelector('.course-container').innerHTML =
                 '<p>Failed to load course details. Please try again later.</p>';
             return;
         }
+        currentCourse = course; // Store course for payment flow
 
         // Set up enroll button
         const enrollButton = document.querySelector('.enroll-btn');
         enrollButton.setAttribute('data-id', courseId);
         enrollButton.setAttribute('data-type', courseType);
-        
-        enrollButton.addEventListener('click', (e) => {
+
+        // Modified enroll button handler
+        enrollButton.addEventListener('click', async (e) => {
             const targetId = e.target.getAttribute('data-id');
             const targetType = e.target.getAttribute('data-type');
-            if (targetId && targetType) {
+
+            // Check if already purchased
+            const isPurchased = await checkCoursePurchase(targetId);
+            if (isPurchased) {
+                window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
+                return;
+            }
+
+            // Show payment flow for paid courses
+            if (targetType === 'paid') {
+                showCartModal(currentCourse);
+            } else {
                 window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
             }
         });
-
         // Update course header
         const header = document.querySelector('.course-header');
         if (course.headerback) {
@@ -145,10 +170,79 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
 
+    // Payment flow functions
+    async function checkCoursePurchase(courseId) {
+        // Implement API call to check purchase status
+        return false; // Temporary placeholder
+    }
+
+    async function showCartModal(course) {
+        document.getElementById('cartCourseName').textContent = course.name;
+        document.getElementById('cartCoursePrice').textContent = course.price;
+
+        // Fetch wallet balance
+        const balance = await fetchWalletBalance();
+        document.getElementById('walletBalance').textContent = balance;
+
+        cartModal.style.display = 'block';
+    }
+
+    async function fetchWalletBalance() {
+        // Implement API call to get wallet balance
+        return 100; // Temporary placeholder
+    }
+
+    // Coupon Apply Handler
+    document.getElementById('applyCoupon').addEventListener('click', async () => {
+        const couponCode = document.getElementById('couponCode').value;
+        // Implement coupon validation
+    });
+
+    // Proceed to Buy Handler
+    document.getElementById('proceedToBuy').addEventListener('click', () => {
+        cartModal.style.display = 'none';
+        confirmModal.style.display = 'block';
+        document.getElementById('confirmAmount').textContent =
+            document.getElementById('cartCoursePrice').textContent;
+    });
+
+    document.getElementById('confirmYes').addEventListener('click', async () => {
+        try {
+            // Process payment
+            const success = await processPayment();
+            if (success) {
+                confirmModal.style.display = 'none';
+
+                const enrollButton = document.querySelector('.enroll-btn');
+                enrollButton.textContent = 'Go to Course';
+
+                // Remove all previous click event listeners
+                const newEnrollButton = enrollButton.cloneNode(true);
+                enrollButton.parentNode.replaceChild(newEnrollButton, enrollButton);
+
+                // Add the new click event listener for redirecting to the course page
+                newEnrollButton.addEventListener('click', () => {
+                    window.location.href = `course_page.html?id=${courseId}&type=${courseType}`;
+                });
+            }
+        } catch (error) {
+            console.error('Payment failed:', error);
+        }
+    });
+
+    document.getElementById('confirmNo').addEventListener('click', () => {
+        confirmModal.style.display = 'none';
+    });
+
+    async function processPayment() {
+        // Implement actual payment processing
+        return true; // Temporary success
+    }
+
 
     // Initial setup
     displayExclusiveCourses();
     await renderCourseDetails();
-    await handleRelatedCourses();
+   
     
 });
