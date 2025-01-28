@@ -440,23 +440,62 @@ app.get('/addcourse', (req, res) => {
 
 
 
-// Add payment processing endpoint
 app.post('/api/process-payment', async (req, res) => {
     try {
-        const { courseId, userId, amount, couponCode } = req.body;
+        const { courseId, userId } = req.body;
 
-        // Validate payment details
-        // Check coupon validity
-        // Deduct from wallet balance
-        // Add course to user's enrolled courses
+        // Validate input
+        if (!mongoose.Types.ObjectId.isValid(courseId) || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: 'Invalid ID format' });
+        }
+
+        // Get user and course
+        const [user, course] = await Promise.all([
+            User.findById(userId),
+            PaidCourse.findById(courseId)
+        ]);
+
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!course) return res.status(404).json({ error: 'Course not found' });
+
+        // Check balance
+        if (user.rewardCoins < course.price) {
+            return res.status(400).json({ error: 'Insufficient coins' });
+        }
+
+        // Check if already purchased
+        const alreadyPurchased = user.enrolledCourses.some(c => c.courseId.equals(course._id));
+        if (alreadyPurchased) {
+            return res.status(400).json({ error: 'Course already purchased' });
+        }
+
+        // Process payment
+        user.rewardCoins -= course.price;
+        user.enrolledCourses.push({
+            courseId: course._id,
+            progress: 0
+        });
+
+        await user.save();
 
         res.json({ success: true });
     } catch (error) {
         console.error('Payment processing error:', error);
-        res.status(500).json({ success: false, error: 'Payment failed' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+// Get full user data (excluding password)
+app.get('/api/user/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user data:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Add this route before the catch-all route
 app.get('/course/:id', (req, res) => {

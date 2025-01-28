@@ -102,22 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Function to update only the coins dynamically
-    async function updateUserCoins() {
-        const storedUser = localStorage.getItem('loggedInUser');
-        if (storedUser) {
-            const user = JSON.parse(storedUser);
-            const updatedCoins = await fetchUserCoins(user._id);
+    // Unified user data updater
+    async function updateUserCoins(userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}/coins`);
+            if (!response.ok) return;
 
-            if (updatedCoins !== null) {
-                user.rewardCoins = updatedCoins; // Update the user's coins in localStorage
+            const { rewardCoins } = await response.json();
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+            // Update only if changed
+            if (user.rewardCoins !== rewardCoins) {
+                user.rewardCoins = rewardCoins;
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
 
-                // Update the coin display in the UI
-                const coinElement = userInfoContainer.querySelector('.bi-coin').parentNode;
-                if (coinElement) {
-                    coinElement.textContent = `${updatedCoins} Coins`;
-                }
+                // Update UI elements
+                document.querySelectorAll('.coin-balance').forEach(element => {
+                    element.textContent = `${rewardCoins} Coins`;
+                });
             }
+        } catch (error) {
+            console.error('Balance update failed:', error);
         }
     }
 
@@ -248,15 +253,30 @@ document.addEventListener('DOMContentLoaded', () => {
             signupBtn.style.display = 'inline-block';
         });
     }
-
-    // Initialize user info from localStorage
-    function initializeUserInfo() {
+    // Initialize user info with fresh data
+    async function initializeUserInfo() {
         const storedUser = localStorage.getItem('loggedInUser');
-        if (storedUser) {
-            const user = JSON.parse(storedUser);
-            showUserInfo(user);
+        if (!storedUser) return;
+
+        try {
+            // 1. Show cached data immediately
+            const cachedUser = JSON.parse(storedUser);
+            showUserInfo(cachedUser);
+
+            // 2. Fetch fresh data from server
+            const freshUser = await fetch(`/api/user/${cachedUser._id}`)
+                .then(res => res.ok ? res.json() : null);
+
+            if (freshUser) {
+                // 3. Update localStorage and UI
+                localStorage.setItem('loggedInUser', JSON.stringify(freshUser));
+                showUserInfo(freshUser);
+            }
+        } catch (error) {
+            console.error('User initialization failed:', error);
         }
     }
+
 
     // Handle signup
     signupForm.addEventListener('submit', async (event) => {
@@ -312,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize the page
+    // Initialize page with async flow
     exploreBtn.addEventListener('click', () => {
         document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
     });
@@ -320,4 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeUserInfo();
     displayCourses();
     displayExclusiveCourses();
+
+    // Add periodic balance refresh (every 2 minutes)
+    setInterval(async () => {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (user) await updateUserCoins(user._id);
+    }, 120000);
 });
