@@ -467,6 +467,8 @@ app.post('/api/process-payment', async (req, res) => {
         const alreadyPurchased = user.enrolledCourses.some(c => c.courseId.equals(course._id));
         if (alreadyPurchased) {
             return res.status(400).json({ error: 'Course already purchased' });
+            
+            
         }
 
         // Process payment
@@ -484,6 +486,11 @@ app.post('/api/process-payment', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
+
+
+
 
 // Get full user data (excluding password)
 app.get('/api/user/:id', async (req, res) => {

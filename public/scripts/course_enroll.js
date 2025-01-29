@@ -2,14 +2,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const courseId = urlParams.get('id');
     const courseType = urlParams.get('type');
-    let currentCourse = null; // Added for payment flow
+    let currentCourse = null;
 
     // Payment modal elements
     const cartModal = document.getElementById('cartModal');
     const confirmModal = document.getElementById('confirmationModal');
     const closeSpans = document.querySelectorAll('.close');
 
-    // Modal close handlers
+    // Close modal listeners
     closeSpans.forEach(span => {
         span.addEventListener('click', () => {
             cartModal.style.display = 'none';
@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (e.target === cartModal) cartModal.style.display = 'none';
         if (e.target === confirmModal) confirmModal.style.display = 'none';
     });
-    // Fetch course details dynamically
+
+    // ✅ Fetch Course Details
     async function fetchCourseDetails() {
         const endpoint = courseType === 'paid'
             ? `/api/paid-courses/by-id/${courseId}`
@@ -32,13 +33,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (!response.ok) throw new Error('Failed to fetch course details');
             return await response.json();
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error fetching course details:', error);
             return null;
         }
     }
-
-
-
 
     // Fetch exclusive courses
     async function fetchExclusiveCourses() {
@@ -55,77 +53,83 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Modified renderCourseDetails function with payment flow
+
+    // ✅ Fetch user balance
+    async function fetchWalletBalance(userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}/coins`);
+            if (!response.ok) throw new Error('Failed to fetch wallet balance');
+            const data = await response.json();
+            return data.rewardCoins;
+        } catch (error) {
+            console.error('Error fetching wallet balance:', error);
+            return 0;
+        }
+    }
+
+    // ✅ Check if Course is Already Purchased
+    async function checkCoursePurchase(courseId, userId) {
+        try {
+            const response = await fetch(`/api/user/${userId}`);
+            if (!response.ok) throw new Error('Failed to fetch user data');
+            const user = await response.json();
+            return user.enrolledCourses.some(course => course.courseId === courseId);
+        } catch (error) {
+            console.error('Error checking purchased courses:', error);
+            return false;
+        }
+    }
+
+
+
+
+    // ✅ Update Course Page
+    // ✅ Update Course Page
     async function renderCourseDetails() {
-        const course = await fetchCourseDetails();
-        if (!course) {
+        currentCourse = await fetchCourseDetails();
+        if (!currentCourse) {
             document.querySelector('.course-container').innerHTML =
                 '<p>Failed to load course details. Please try again later.</p>';
             return;
         }
-        currentCourse = course; // Store course for payment flow
 
-        // Set up enroll button
-        const enrollButton = document.querySelector('.enroll-btn');
-        enrollButton.setAttribute('data-id', courseId);
-        enrollButton.setAttribute('data-type', courseType);
-
-        // Modified enroll button handler
-        enrollButton.addEventListener('click', async (e) => {
-            const targetId = e.target.getAttribute('data-id');
-            const targetType = e.target.getAttribute('data-type');
-
-            // Check if already purchased
-            const isPurchased = await checkCoursePurchase(targetId);
-            if (isPurchased) {
-                window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
-                return;
-            }
-
-            // Show payment flow for paid courses
-            if (targetType === 'paid') {
-                showCartModal(currentCourse);
-            } else {
-                window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
-            }
-        });
-        // Update course header
+        // ✅ Update Course Header
         const header = document.querySelector('.course-header');
-        if (course.headerback) {
-            header.style.background = `url(${course.headerback}) center/cover no-repeat`;
+        if (currentCourse.headerback) {
+            header.style.background = `url(${currentCourse.headerback}) center/cover no-repeat`;
         }
 
-        // Populate course info
-        document.querySelector('.header-left h1').textContent = course.name || 'Untitled Course';
-        document.querySelector('.course-description .expandable-content').textContent = 
-            course.description || 'No description available.';
+        // ✅ Populate Course Info
+        document.querySelector('.header-left h1').textContent = currentCourse.name || 'Untitled Course';
+        document.querySelector('.course-description .expandable-content').textContent =
+            currentCourse.description || 'No description available.';
 
-        // Update features list
-        const featuresList = document.querySelector('.features-list');
-        const features = [
-            course.modules && { icon: 'fas fa-quiz', label: `${course.modules.length} modules` },
-            course.project && { icon: 'fas fa-file', label: `${course.project.length} projects` },
-            { icon: 'fas fa-mobile-alt', label: 'Multi-device access' },
-            { icon: 'fas fa-certificate', label: 'Completion certificate' }
-        ].filter(Boolean);
-        
-        featuresList.innerHTML = features.map(f => 
-            `<li><i class="${f.icon}"></i> ${f.label}</li>`
-        ).join('');
-
-        // Update skills
+        // ✅ Update Key Skills
         const skillsTags = document.querySelector('.skills-tags');
-        if (course.keySkills) {
-            skillsTags.innerHTML = course.keySkills
+        if (currentCourse.keySkills) {
+            skillsTags.innerHTML = currentCourse.keySkills
                 .map(skill => `<span class="skill-tag">${skill}</span>`)
                 .join('');
         }
 
-        // Update syllabus
+        // ✅ Update Features List
+        const featuresList = document.querySelector('.features-list');
+        const features = [
+            currentCourse.modules && { icon: 'fas fa-quiz', label: `${currentCourse.modules.length} modules` },
+            currentCourse.project && { icon: 'fas fa-file', label: `${currentCourse.project.length} projects` },
+            { icon: 'fas fa-mobile-alt', label: 'Multi-device access' },
+            { icon: 'fas fa-certificate', label: 'Completion certificate' }
+        ].filter(Boolean);
+
+        featuresList.innerHTML = features.map(f =>
+            `<li><i class="${f.icon}"></i> ${f.label}</li>`
+        ).join('');
+
+        // ✅ Update Course Syllabus
         const syllabusContainer = document.querySelector('.course-syllabus');
-        if (course.modules) {
-            syllabusContainer.innerHTML = course.modules.map((module, index) => `
-                <div class="chapter" data-chapter="${index + 1}">
+        if (currentCourse.modules) {
+            syllabusContainer.innerHTML = currentCourse.modules.map((module, index) => `
+                <div class="chapter">
                     <div class="chapter-header">
                         <h3>${module.title}</h3>
                         <span class="chapter-duration">${module.topics.length} topics</span>
@@ -137,112 +141,155 @@ document.addEventListener('DOMContentLoaded', async function () {
                 </div>`
             ).join('');
         }
+
+        // ✅ Display Related Courses Under "Related Courses"
+        async function displayExclusiveCourses() {
+            const courses = await fetchExclusiveCourses();
+            const relatedCoursesContainer = document.querySelector('.related-courses');
+
+            if (!Array.isArray(courses) || courses.length === 0) {
+                relatedCoursesContainer.innerHTML = `<p>No related courses available at the moment.</p>`;
+                return;
+            }
+
+            relatedCoursesContainer.innerHTML = courses.map(course => `
+        <div class="course-card">
+            <img src="${course.thumbnail}" alt="${course.name}" class="course-thumbnail" />
+            <h3>${course.name}</h3>
+            <p><strong>Price:</strong> $${course.price}</p>
+            <button class="enroll-course-btn" data-id="${course._id}">View</button>
+        </div>
+    `).join('');
+
+            document.querySelectorAll('.enroll-course-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const selectedCourseId = e.target.getAttribute('data-id');
+                    window.location.href = `/course_enroll.html?id=${selectedCourseId}&type=paid`;
+                });
+            });
+        }
+
+        // ✅ Update Enroll Button Status
+        updateEnrollButton();
+
+        // ✅ Actually display the exclusive courses
+        await displayExclusiveCourses(); // Add this line to execute the function
+
+
+
     }
 
-    // Display exclusive courses dynamically
-    async function displayExclusiveCourses() {
-        const courses = await fetchExclusiveCourses();
-        const exclusiveCoursesContainer = document.querySelector('.related-courses');
-        if (!Array.isArray(courses) || courses.length === 0) {
-            exclusiveCoursesContainer.innerHTML = `<p>No exclusive courses available at the moment.</p>`;
+    // ✅ Update Enroll Button State
+    async function updateEnrollButton() {
+        const enrollButton = document.querySelector('.enroll-btn');
+        if (!enrollButton) return;
+
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) return;
+
+        const isPurchased = await checkCoursePurchase(courseId, user._id);
+        if (isPurchased) {
+            enrollButton.textContent = 'Go to Course';
+            enrollButton.classList.add('go-to-course');
+            enrollButton.removeEventListener('click', enrollClickHandler);
+            enrollButton.addEventListener('click', () => {
+                window.location.href = `course_page.html?id=${courseId}&type=${courseType}`;
+            });
+        } else {
+            enrollButton.textContent = 'Enroll Now';
+            enrollButton.classList.remove('go-to-course');
+            enrollButton.addEventListener('click', enrollClickHandler);
+        }
+    }
+
+    // ✅ Enroll Button Click Handler (Handle Payment for Paid Courses)
+    async function enrollClickHandler(event) {
+        const targetId = event.target.getAttribute('data-id');
+        const targetType = event.target.getAttribute('data-type');
+
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) {
+            alert('Please log in to enroll in a course.');
             return;
         }
 
-        exclusiveCoursesContainer.innerHTML = courses.map(course => `
-            <div class="course-card">
-                <img src="${course.thumbnail}" alt="${course.name}" class="course-thumbnail" />
-                <h3>${course.name}</h3>
-                <p><strong>Price:</strong> $${course.price}</p>
-                <button class="enroll-course-btn" data-id="${course._id}" data-type="paid">Enroll</button>
-            </div>
-        `).join('');
+        const isPurchased = await checkCoursePurchase(targetId, user._id);
+        if (isPurchased) {
+            window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
+            return;
+        }
 
-        // Add event listeners to "Enroll" buttons
-        document.querySelectorAll('.enroll-course-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const courseId = e.target.getAttribute('data-id');
-                const courseType = e.target.getAttribute('data-type');
-                if (courseId && courseType) {
-                    window.location.href = `/course_enroll.html?id=${courseId}&type=${courseType}`;
-                }
-            });
-        });
+        if (targetType === 'paid') {
+            showCartModal(currentCourse);
+        } else {
+            window.location.href = `course_page.html?id=${targetId}&type=${targetType}`;
+        }
     }
 
-
-    // Payment flow functions
-    async function checkCoursePurchase(courseId) {
-        // Implement API call to check purchase status
-        return false; // Temporary placeholder
-    }
-
+    // ✅ Open Payment Modal for Paid Courses
     async function showCartModal(course) {
         document.getElementById('cartCourseName').textContent = course.name;
-        document.getElementById('cartCoursePrice').textContent = course.price;
+        document.getElementById('cartCoursePrice').textContent = `$${course.price}`;
 
-        // Fetch wallet balance
-        const balance = await fetchWalletBalance();
-        document.getElementById('walletBalance').textContent = balance;
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (user) {
+            const balance = await fetchWalletBalance(user._id);
+            document.getElementById('walletBalance').textContent = `$${balance}`;
+        }
 
         cartModal.style.display = 'block';
     }
 
-    async function fetchWalletBalance() {
-        // Implement API call to get wallet balance
-        return 100; // Temporary placeholder
-    }
-
-    // Coupon Apply Handler
-    document.getElementById('applyCoupon').addEventListener('click', async () => {
-        const couponCode = document.getElementById('couponCode').value;
-        // Implement coupon validation
-    });
-
-    // Proceed to Buy Handler
-    document.getElementById('proceedToBuy').addEventListener('click', () => {
+    // ✅ Handle Payment
+    document.getElementById('proceedToBuy').addEventListener('click', async () => {
         cartModal.style.display = 'none';
         confirmModal.style.display = 'block';
         document.getElementById('confirmAmount').textContent =
             document.getElementById('cartCoursePrice').textContent;
     });
 
-  document.getElementById('confirmYes').addEventListener('click', async () => {
-    try {
-        // Process payment
+    document.getElementById('confirmYes').addEventListener('click', async () => {
         const success = await processPayment();
         if (success) {
             confirmModal.style.display = 'none';
-
-            const enrollButton = document.querySelector('.enroll-btn');
-            enrollButton.textContent = 'Go to Course';
-
-            // Remove all previous click event listeners
-            const newEnrollButton = enrollButton.cloneNode(true);
-            enrollButton.parentNode.replaceChild(newEnrollButton, enrollButton);
-
-            // Add the new click event listener for redirecting to the course page
-            newEnrollButton.addEventListener('click', () => {
-                window.location.href = `course_page.html?id=${courseId}&type=${courseType}`;
-            });
+            updateEnrollButton();
         }
-    } catch (error) {
-        console.error('Payment failed:', error);
-    }
-});
-
-    document.getElementById('confirmNo').addEventListener('click', () => {
-        confirmModal.style.display = 'none';
     });
 
     async function processPayment() {
-        // Implement actual payment processing
-        return true; // Temporary success
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) {
+            alert('Please log in to purchase the course.');
+            return false;
+        }
+
+        try {
+            const response = await fetch('/api/process-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseId: currentCourse._id,
+                    userId: user._id
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Payment failed');
+            }
+
+            localStorage.setItem(`enrolled_${courseId}`, 'true');
+            return true;
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert(error.message);
+            return false;
+        }
     }
 
-
-    // Initial setup
-    displayExclusiveCourses();
-    await renderCourseDetails();
-   
     
+
+    // ✅ Initialize Course Page
+    await renderCourseDetails();
+
 });
