@@ -317,6 +317,99 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
     });
 
+
+    // Handle Earn tab click
+    document.querySelector('a[href="#earn"]').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+        if (!user) {
+            loginModal.style.display = 'block';
+            return;
+        }
+
+        // Hide other sections
+        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('earn').classList.remove('hidden');
+
+        // Load earn options
+        renderEarnOptions();
+    });
+
+    function renderEarnOptions() {
+        const options = [
+            { type: 'video', title: 'Watch Ads', desc: 'Watch a 2-minute video ad', duration: 120, coins: 15 },
+            { type: 'static', title: 'View Static Ad', desc: 'View ad for 30 seconds', duration: 30, coins: 10 },
+            { type: 'click', title: 'Click Ad', desc: 'Click and interact with ad', duration: 10, coins: 5 }
+        ];
+
+        const container = document.getElementById('earnOptions');
+        container.innerHTML = options.map(opt => `
+        <div class="earn-card">
+            <h3>${opt.title}</h3>
+            <p>${opt.desc}</p>
+            <button class="start-earn" 
+                    data-type="${opt.type}"
+                    data-duration="${opt.duration}"
+                    data-coins="${opt.coins}">
+                Start
+            </button>
+            <div class="timer hidden">Time left: <span>${opt.duration}</span>s</div>
+        </div>
+    `).join('');
+
+        // Add event listeners
+        document.querySelectorAll('.start-earn').forEach(btn => {
+            btn.addEventListener('click', handleAdStart);
+        });
+    }
+
+    async function handleAdStart(e) {
+        const button = e.target;
+        const duration = parseInt(button.dataset.duration);
+        const coins = parseInt(button.dataset.coins);
+        const timerDiv = button.nextElementSibling;
+        const timerSpan = timerDiv.querySelector('span');
+
+        button.disabled = true;
+        timerDiv.classList.remove('hidden');
+
+        let timeLeft = duration;
+        const interval = setInterval(() => {
+            timeLeft--;
+            timerSpan.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                awardCoins(coins);
+                button.disabled = false;
+                timerDiv.classList.add('hidden');
+            }
+        }, 1000);
+    }
+
+    async function awardCoins(coins) {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+        try {
+            const response = await fetch(`/api/user/${user._id}/add-coins`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coins })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                user.rewardCoins = data.newCoins;
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                updateUserCoins();
+                alert(`🎉 ${coins} coins added to your account!`);
+            }
+        } catch (error) {
+            console.error('Coin update failed:', error);
+        }
+    }
+
     initializeUserInfo();
     displayCourses();
     displayExclusiveCourses();

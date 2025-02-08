@@ -487,7 +487,22 @@ app.post('/api/process-payment', async (req, res) => {
     }
 });
 
+app.post('/api/user/:id/add-coins', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
 
+        user.rewardCoins += req.body.coins;
+        await user.save();
+
+        res.json({
+            success: true,
+            newCoins: user.rewardCoins
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Coin update failed' });
+    }
+});
 
 
 
