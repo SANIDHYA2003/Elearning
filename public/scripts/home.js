@@ -72,6 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
         #signout-btn:hover {
             background-color: #FF0000;
         }
+
+        // Add to the dynamic style section in home.js
+.profile-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+    &:hover {
+        color: #007bff;
+    }
+}
     `;
     document.head.appendChild(style);
 
@@ -233,11 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show user info
     function showUserInfo(user) {
         userInfoContainer.innerHTML = `
-            <div class="user-info">
-                <span><i class="bi bi-person-circle"></i> ${user.name}</span>
-                <span><i class="bi bi-coin"></i> ${user.rewardCoins} Coins</span>
-                <button id="signout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
-            </div>`;
+        <div class="user-info">
+            <a href="/profile" class="profile-link">
+                <i class="bi bi-person-circle"></i> ${user.name}
+            </a>
+            <span><i class="bi bi-coin"></i> ${user.rewardCoins} Coins</span>
+            <button id="signout-btn"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
+        </div>`;
         loginBtn.style.display = 'none';
         signupBtn.style.display = 'none';
 

@@ -405,7 +405,24 @@ app.get('/api/related-paid-courses/:id', async (req, res) => {
     }
 });
 
+// Update user profile
+app.put('/api/user/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const updates = req.body;
 
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $set: updates },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 // Fetch user's coin balance
 app.get('/api/user/:id/coins', async (req, res) => {
@@ -519,9 +536,18 @@ app.get('/api/user/:id', async (req, res) => {
     }
 });
 
+
+
+
+
 // Add this route before the catch-all route
 app.get('/course/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'course_page.html'));
+});
+
+
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
 // Serve the index.html file for all other routes
@@ -530,6 +556,7 @@ app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'public', 'home.html'));
     }
 });
+
 
 // Route to fetch exclusive courses
 app.get('/api/paid-courses', async (req, res) => {

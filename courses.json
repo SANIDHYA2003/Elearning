@@ -1,82 +1,56 @@
 [
 {
-    "title": "IT Support Fundamentals",
-    "category": "Information Technology",
-    "course_code": "IT101",
+    "title": "Redis Fundamentals",
+    "category": "Database Technologies",
+    "course_code": "REDIS101",
     "modules": [
         {
-            "title": "Introduction to IT Support",
+            "title": "Introduction to Redis",
             "topics": [
-                {"title": "What is IT Support?"},
-                {"title": "Roles and Responsibilities of an IT Support Specialist"},
-                {"title": "Basic Troubleshooting Techniques"},
-                {"title": "IT Support Tools and Software"},
-                {"title": "Understanding End-User Needs"},
-                {"title": "Communication Skills in IT Support"},
-                {"title": "Best Practices for IT Support"}
+                {"title": "What is Redis?"},
+                {"title": "Installing Redis on Different Platforms"},
+                {"title": "Redis vs Other Databases"},
+                {"title": "Use Cases of Redis"}
             ]
         },
         {
-            "title": "Computer Hardware and Software Basics",
+            "title": "Redis Data Structures",
             "topics": [
-                {"title": "Components of a Computer System"},
-                {"title": "Operating Systems Overview"},
-                {"title": "Installing and Configuring Software"},
-                {"title": "Hardware Troubleshooting"},
-                {"title": "Common Software Issues and Fixes"},
-                {"title": "Introduction to Virtual Machines"},
-                {"title": "Peripheral Devices and Configuration"}
+                {"title": "Strings and Lists"},
+                {"title": "Sets and Sorted Sets"},
+                {"title": "Hashes and Bitmaps"},
+                {"title": "HyperLogLog and Streams"}
             ]
         },
         {
-            "title": "Networking Fundamentals",
+            "title": "Persistence and Replication",
             "topics": [
-                {"title": "Basics of Networking"},
-                {"title": "Network Devices and Configurations"},
-                {"title": "Understanding IP Addresses and Subnetting"},
-                {"title": "Wireless Networks and Security"},
-                {"title": "Troubleshooting Network Issues"},
-                {"title": "VPN and Remote Access"},
-                {"title": "Cloud Networking Basics"}
+                {"title": "Redis Persistence Mechanisms"},
+                {"title": "Snapshotting and AOF"},
+                {"title": "Replication in Redis"},
+                {"title": "High Availability with Redis Sentinel"}
             ]
         },
         {
-            "title": "Cybersecurity Essentials",
+            "title": "Redis Pub/Sub and Caching",
             "topics": [
-                {"title": "Introduction to Cybersecurity"},
-                {"title": "Common Cyber Threats and Attacks"},
-                {"title": "Antivirus and Malware Protection"},
-                {"title": "Basic Security Best Practices"},
-                {"title": "Password Management and Authentication"},
-                {"title": "Firewalls and Network Security"},
-                {"title": "Incident Response and Recovery"}
+                {"title": "Understanding Redis Pub/Sub"},
+                {"title": "Implementing Real-Time Messaging"},
+                {"title": "Using Redis as a Cache"},
+                {"title": "Eviction Policies and Expiry"}
             ]
         },
         {
-            "title": "IT Support Operations",
+            "title": "Redis Security and Optimization",
             "topics": [
-                {"title": "Help Desk and Support Ticketing Systems"},
-                {"title": "Remote Support and Troubleshooting"},
-                {"title": "IT Documentation and Reporting"},
-                {"title": "Asset Management and Inventory"},
-                {"title": "IT Policies and Compliance"},
-                {"title": "Customer Service in IT Support"},
-                {"title": "Managing User Permissions and Accounts"}
-            ]
-        },
-        {
-            "title": "Advanced IT Support Techniques",
-            "topics": [
-                {"title": "Server Administration Basics"},
-                {"title": "Cloud Computing and IT Support"},
-                {"title": "Automating IT Tasks with Scripting"},
-                {"title": "IT Disaster Recovery Planning"},
-                {"title": "Enterprise IT Support Challenges"},
-                {"title": "Understanding IT Infrastructure"},
-                {"title": "IT Career Growth and Certifications"}
+                {"title": "Securing Redis Instances"},
+                {"title": "Redis Authentication and ACLs"},
+                {"title": "Performance Optimization Tips"},
+                {"title": "Scaling Redis with Clustering"}
             ]
         }
     ]
 }
+
 
 ]
