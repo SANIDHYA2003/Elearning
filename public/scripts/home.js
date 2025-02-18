@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         courseList.innerHTML = courses.map(course => `
             <div class="course-card">
+                <img src="${course.thumbnail}" alt="${course.name}" class="course-thumbnail" />
                 <h3>${course.title || 'Untitled Course'}</h3>
                 <p>Category: ${course.category || 'Uncategorized'}</p>
                 <p>Modules: ${course.modules?.length || 0}</p>

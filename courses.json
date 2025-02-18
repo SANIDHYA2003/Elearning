@@ -1,56 +1,52 @@
 [
-{
-    "title": "Redis Fundamentals",
-    "category": "Database Technologies",
-    "course_code": "REDIS101",
+    {
+    "title": "Introduction to Python",
+    "category": "Programming",
+    "thumbnail": "https://example.com/python-thumbnail.jpg",
+    "course_code": "PY101",
     "modules": [
         {
-            "title": "Introduction to Redis",
+            "title": "Getting Started with Python",
             "topics": [
-                {"title": "What is Redis?"},
-                {"title": "Installing Redis on Different Platforms"},
-                {"title": "Redis vs Other Databases"},
-                {"title": "Use Cases of Redis"}
+                {
+                    "title": "Introduction to Python"
+                },
+                {
+                    "title": "Setting up Python Environment"
+                },
+                {
+                    "title": "Writing Your First Python Program"
+                }
             ]
         },
         {
-            "title": "Redis Data Structures",
+            "title": "Data Types and Variables",
             "topics": [
-                {"title": "Strings and Lists"},
-                {"title": "Sets and Sorted Sets"},
-                {"title": "Hashes and Bitmaps"},
-                {"title": "HyperLogLog and Streams"}
+                {
+                    "title": "Understanding Variables"
+                },
+                {
+                    "title": "Data Types in Python"
+                },
+                {
+                    "title": "Type Conversion"
+                }
             ]
         },
         {
-            "title": "Persistence and Replication",
+            "title": "Control Flow in Python",
             "topics": [
-                {"title": "Redis Persistence Mechanisms"},
-                {"title": "Snapshotting and AOF"},
-                {"title": "Replication in Redis"},
-                {"title": "High Availability with Redis Sentinel"}
-            ]
-        },
-        {
-            "title": "Redis Pub/Sub and Caching",
-            "topics": [
-                {"title": "Understanding Redis Pub/Sub"},
-                {"title": "Implementing Real-Time Messaging"},
-                {"title": "Using Redis as a Cache"},
-                {"title": "Eviction Policies and Expiry"}
-            ]
-        },
-        {
-            "title": "Redis Security and Optimization",
-            "topics": [
-                {"title": "Securing Redis Instances"},
-                {"title": "Redis Authentication and ACLs"},
-                {"title": "Performance Optimization Tips"},
-                {"title": "Scaling Redis with Clustering"}
+                {
+                    "title": "Conditional Statements"
+                },
+                {
+                    "title": "Loops in Python"
+                },
+                {
+                    "title": "Functions and Scope"
+                }
             ]
         }
     ]
 }
-
-
 ]

@@ -38,6 +38,7 @@ mongoose.connect(MONGO_URI, {
 const CourseSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
+    thumbnail: { type: String, required: true },
     course_code: {
         type: String,
         required: true,
@@ -576,5 +577,6 @@ app.get('/api/paid-courses', async (req, res) => {
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+    console.log(`http://localhost:${port}/`);
 });
 
