@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const exploreBtn = document.getElementById('exploreBtn');
+    
     const courseList = document.getElementById('courseList');
     const userInfoContainer = document.getElementById("user-info-container");
     const exclusiveCoursesContainer = document.getElementById('exclusiveCoursesContainer');
@@ -325,10 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize the page
-    exploreBtn.addEventListener('click', () => {
-        document.getElementById('courses').scrollIntoView({ behavior: 'smooth' });
-    });
 
 
     // Handle Earn tab click

@@ -89,24 +89,40 @@ document.addEventListener('DOMContentLoaded', () => {
         topicContent.classList.add('loading');
         topicContent.innerHTML = '<p>Loading content...</p>';
 
+        // Use topic title to create a unique localStorage key
+        const storageKey = `topicContent_${topic.title.replace(/\s+/g, '_')}`;
+        let cachedContent = localStorage.getItem(storageKey);
+
+        // If cached content exists, use it and stop loading further
+        if (cachedContent) {
+            topicContent.innerHTML = cachedContent;
+            topicContent.classList.remove('loading');
+            updateNavigationButtons();
+            return;
+        }
+
+        // Otherwise, generate and cache the content
         if (courseType === 'paid') {
-            // Render markdown content, including inline images
+            // Render markdown content, including inline images if available
             const markdownContent = topic.content ? md.render(topic.content) : '<p>No content available for this topic.</p>';
 
-            topicContent.innerHTML = `
-        <div class="video-section">
-            <!-- Embed YouTube video -->
-            ${topic.video ? `
-                <iframe width="640" height="360" src="https://www.youtube.com/embed/${getYouTubeVideoId(topic.video)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            ` : '<p>No video available for this topic.</p>'}
-        </div>
-        <div class="content-section">
-            ${markdownContent}
-        </div>
-        <div class="notes-download">
-            <button id="downloadNotesButton">Download Notes</button>
-        </div>
-    `;
+            const generatedContent = `
+                <div class="video-section">
+                    <!-- Embed YouTube video if available -->
+                    ${topic.video ? `
+                        <iframe width="640" height="360" src="https://www.youtube.com/embed/${getYouTubeVideoId(topic.video)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    ` : '<p>No video available for this topic.</p>'}
+                </div>
+                <div class="content-section">
+                    ${markdownContent}
+                </div>
+                <div class="notes-download">
+                    <button id="downloadNotesButton">Download Notes</button>
+                </div>
+            `;
+
+            topicContent.innerHTML = generatedContent;
+            localStorage.setItem(storageKey, generatedContent);
 
             // Add event listener for download button
             const downloadButton = document.getElementById('downloadNotesButton');
@@ -117,32 +133,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Notes are not available for this topic.');
                 }
             });
-        }
-
-  else if (courseType === 'free') {
+        } else if (courseType === 'free') {
             // Generate content for free courses
             const content = await generateContent(topic.title);
-            topicContent.innerHTML = `
-        <div class="content-section">
-            ${content}
-        </div>
-        `;
+            const generatedContent = `
+                <div class="content-section">
+                    ${content}
+                </div>
+            `;
+            topicContent.innerHTML = generatedContent;
+            localStorage.setItem(storageKey, generatedContent);
         }
 
-        // Stop loading content
+        // Stop loading content and update navigation buttons
         topicContent.classList.remove('loading');
-
-        // Update navigation buttons
         updateNavigationButtons();
     }
 
     // Helper function to extract YouTube video ID from a shareable URL
     function getYouTubeVideoId(url) {
-        const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/watch\\?v=|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/;
         const match = url.match(regex);
         return match ? match[1] : null;
     }
-
 
     async function generateContent(topic) {
         try {
