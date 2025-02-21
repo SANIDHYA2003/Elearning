@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered MCQ Test</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style/mcq.css">
+</head>
+
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-content">
+            <div class="brain-animation">
+                <div class="brain-waves"></div>
+                <div class="brain-icon">🧠</div>
+            </div>
+            <h2>AI is thinking...</h2>
+            <div class="loading-messages">
+                <p>Generating challenging questions</p>
+                <p>Crafting meaningful options</p>
+                <p>Preparing your test</p>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="test-container" style="display: none;">
+        <div class="timer" id="timer">15:00</div>
+        <div id="questions-container"></div>
+        <button id="submit-btn" style="display: none;">Submit Test</button>
+        <div id="results-container"></div>
+    </div>
+    <script src="scripts/mcq.js"></script>
+</body>
+
+</html>

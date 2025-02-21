@@ -425,6 +425,128 @@ app.put('/api/user/:id', async (req, res) => {
     }
 });
 
+
+
+// Add these new routes in your server.js
+
+// Generate MCQ Questions
+// Generate MCQ Questions
+app.post('/api/generate-mcqs', async (req, res) => {
+    try {
+        const { topic, questionType = 'mcq', count = 10 } = req.body;
+        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+        // Choose a prompt based on questionType
+        const prompt = questionType === 'text'
+            ? `Generate ${count} text type questions about ${topic} with these requirements:
+- Format as JSON array
+- Each question object should have:
+  * question (string)
+  * type (string, set to "text")
+  * correctAnswer (string) - provide the full correct answer
+  * explanation (brief reasoning)
+  * difficulty ('easy', 'medium', 'hard')
+Example format:
+[{
+  "question": "What is the output of 2+2?",
+  "type": "text",
+  "correctAnswer": "4",
+  "explanation": "2+2 equals 4.",
+  "difficulty": "easy"
+}]`
+            : `Generate ${count} mcq questions about ${topic} with these requirements:
+- Format as JSON array
+- Each question object should have:
+  * question (string)
+  * options (array of 4 strings)
+  * correctAnswer (index number 0-3)
+  * explanation (brief reasoning)
+  * difficulty ('easy', 'medium', 'hard')
+- For coding questions:
+  * Include problem statement
+  * Sample input/output
+  * Provide correct code solution
+- Mix conceptual and practical questions
+- Avoid markdown formatting
+Example format:
+[{
+  "question": "What is the output of console.log(2+2)?",
+  "options": ["2", "4", "22", "undefined"],
+  "correctAnswer": 1,
+  "explanation": "2+2 equals 4.",
+  "difficulty": "easy"
+}]`;
+
+        const result = await model.generateContent(prompt);
+        const textResponse = result.response.text();
+        console.log("AI raw response:", textResponse); // For debugging
+
+        // Clean the response: Remove markdown code block markers (e.g. ```json and ```)
+        let cleaned = textResponse.replace(/```json\s*/g, '').replace(/```/g, '');
+        cleaned = cleaned.trim();
+
+        // Now parse the cleaned JSON string
+        const questions = JSON.parse(cleaned);
+
+        res.json(questions);
+    } catch (error) {
+        console.error('MCQ generation failed:', error);
+        res.status(500).json({ error: 'Failed to generate questions' });
+    }
+});
+
+
+// Validate Answers
+app.post('/api/validate-test', async (req, res) => {
+    try {
+        const { responses, questions } = req.body;
+        if (!responses || !questions) {
+            return res.status(400).json({ error: 'Invalid test data' });
+        }
+
+        let score = 0;
+        const results = questions.map((q, index) => {
+            let isCorrect, correctAnswer, userAnswer;
+            if (q.options && Array.isArray(q.options)) {
+                // Multiple choice question
+                isCorrect = q.correctAnswer === responses[index];
+                if (isCorrect) score++;
+                correctAnswer = q.options[q.correctAnswer];
+                userAnswer = q.options[responses[index]] || 'Unanswered';
+            } else {
+                // Text-type question: Compare answers case-insensitively
+                const expected = String(q.correctAnswer || '').trim().toLowerCase();
+                const received = String(responses[index] || '').trim().toLowerCase();
+                isCorrect = expected === received;
+                if (isCorrect) score++;
+                correctAnswer = q.correctAnswer;
+                userAnswer = responses[index] || 'Unanswered';
+            }
+            return {
+                question: q.question || q.problemStatement,
+                correctAnswer,
+                userAnswer,
+                explanation: q.explanation || '',
+                isCorrect
+            };
+        });
+
+        res.json({
+            score,
+            total: questions.length,
+            percentage: ((score / questions.length) * 100).toFixed(2),
+            results
+        });
+    } catch (error) {
+        console.error('Validation error:', error);
+        res.status(500).json({ error: 'Test validation failed' });
+    }
+
+});
+
+
+
+
 // Fetch user's coin balance
 app.get('/api/user/:id/coins', async (req, res) => {
     try {
@@ -549,6 +671,12 @@ app.get('/course/:id', (req, res) => {
 
 app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+
+// Serve the MCQ page on a dedicated route
+app.get('/mcq', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'mcq.html'));
 });
 
 // Serve the index.html file for all other routes
